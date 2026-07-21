@@ -10,15 +10,7 @@ import { contactSchema } from "@/lib/contact-schema";
 
 const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
 
-/*
- * Public by design. Web3Forms' free plan expects the browser to post directly,
- * so the key ships in the bundle — that is the documented architecture, and the
- * key only ever grants "send a message to the owner's inbox". A server-side
- * proxy would need a paid plan with a safelisted IP.
- */
-const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
-
-type Status = "idle" | "submitting" | "success" | "error";
+type Status = "idle" | "sending" | "success" | "error";
 
 const labelFor = (
   options: readonly { value: string; label: string }[],
@@ -43,10 +35,29 @@ export function ContactForm() {
     event.preventDefault();
     setFormError(null);
 
-    const formData = new FormData(event.currentTarget);
-    const raw = Object.fromEntries(formData);
+    /*
+     * Captured synchronously: React nulls `event.currentTarget` once the
+     * handler yields, so reaching for it after the first `await` would fail.
+     */
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    const entries = Object.fromEntries(formData);
     const parsed = contactSchema.safeParse({
-      ...raw,
+      ...entries,
+      /*
+       * A <select> whose placeholder option is disabled counts as having no
+       * selection, so the browser leaves it out of FormData altogether.
+       * Without this, zod sees `undefined` and reports "expected string,
+       * received undefined" to the visitor instead of "Please pick a service."
+       */
+      service: entries.service ?? "",
+      budget: entries.budget ?? "",
+      /*
+       * An unchecked checkbox is likewise absent — which is exactly how
+       * Web3Forms expects `botcheck` to behave, so the FormData entry is left
+       * untouched and only normalised to a boolean for zod.
+       */
       botcheck: formData.get("botcheck") === "on",
     });
 
@@ -63,9 +74,17 @@ export function ContactForm() {
 
     setErrors({});
 
-    if (!ACCESS_KEY) {
+    /*
+     * Read from `process.env` at the point of use rather than module scope, so
+     * the value is never held in a named module constant. Public by design:
+     * Web3Forms' free plan expects the browser to post directly, and the key
+     * only grants "send a message to the owner's inbox".
+     */
+    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+
+    if (!accessKey) {
       console.error(
-        "Contact form is not configured: NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY is missing at build time.",
+        "[contact] NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY is missing at build time.",
       );
       setFormError(
         `The form isn’t configured yet. Please email me directly at ${site.email}.`,
@@ -74,30 +93,30 @@ export function ContactForm() {
       return;
     }
 
-    setStatus("submitting");
+    setStatus("sending");
 
-    const { name, email, company, service, budget, message, botcheck } =
-      parsed.data;
+    formData.append("access_key", accessKey);
+
+    /*
+     * The selects submit machine values (`full-stack`, `3k-5k`). Swapping in
+     * the human labels keeps the notification email readable; `subject` and
+     * `from_name` are Web3Forms' own routing fields and have no visible input.
+     */
+    formData.set("service", labelFor(serviceOptions, parsed.data.service));
+    formData.set("budget", labelFor(budgetOptions, parsed.data.budget));
+    formData.set("company", parsed.data.company || "—");
+    formData.set("subject", `New project enquiry — ${parsed.data.name}`);
+    formData.set("from_name", site.name);
 
     try {
+      /*
+       * No explicit Content-Type: the browser must set `multipart/form-data`
+       * itself, because only it knows the boundary token. Setting the header
+       * by hand omits the boundary and the request body becomes unparseable.
+       */
       const response = await fetch(WEB3FORMS_ENDPOINT, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          access_key: ACCESS_KEY,
-          subject: `New project enquiry — ${name}`,
-          from_name: site.name,
-          name,
-          email,
-          company: company || "—",
-          service: labelFor(serviceOptions, service),
-          budget: labelFor(budgetOptions, budget),
-          message,
-          botcheck: Boolean(botcheck),
-        }),
+        body: formData,
       });
 
       /*
@@ -106,25 +125,25 @@ export function ContactForm() {
        * useful evidence of what actually happened.
        */
       const bodyText = await response.text();
-      let result: unknown = null;
+      let data: unknown = null;
       try {
-        result = JSON.parse(bodyText);
+        data = JSON.parse(bodyText);
       } catch {
-        /* Left null; logged below. */
+        /* Left null; the raw text is logged below instead. */
       }
 
       const reportedSuccess =
-        typeof result === "object" &&
-        result !== null &&
-        (result as { success?: unknown }).success === true;
+        typeof data === "object" &&
+        data !== null &&
+        (data as { success?: unknown }).success === true;
 
       /* Both signals must agree before anything is called a success. */
       if (!response.ok || !reportedSuccess) {
         const detail =
-          typeof result === "object" &&
-          result !== null &&
-          typeof (result as { message?: unknown }).message === "string"
-            ? (result as { message: string }).message
+          typeof data === "object" &&
+          data !== null &&
+          typeof (data as { message?: unknown }).message === "string"
+            ? (data as { message: string }).message
             : bodyText.slice(0, 200);
 
         /* Safe to log: status and Web3Forms' own message. Never the key. */
@@ -143,6 +162,8 @@ export function ContactForm() {
         return;
       }
 
+      /* Only ever cleared once Web3Forms has confirmed success. */
+      form.reset();
       setStatus("success");
     } catch (error) {
       console.error("[contact] Network error reaching Web3Forms:", error);
@@ -342,16 +363,18 @@ export function ContactForm() {
         </p>
       ) : null}
 
+      {/* Disabled while in flight so a double click cannot send twice. */}
       <button
         type="submit"
-        disabled={status === "submitting"}
+        disabled={status === "sending"}
+        aria-busy={status === "sending"}
         className={buttonClass({
           tone: "ink",
           size: "lg",
           className: "mt-8 disabled:cursor-not-allowed disabled:opacity-60",
         })}
       >
-        {status === "submitting" ? "Sending…" : "Send Project Details"}
+        {status === "sending" ? "Sending…" : "Send Project Details"}
         <LuArrowRight className="size-4" aria-hidden="true" />
       </button>
     </form>

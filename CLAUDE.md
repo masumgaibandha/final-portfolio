@@ -23,6 +23,13 @@ Environment: Node v22.17.0, npm 10.9.2, git 2.50.0. The repo is **not** under ve
 
 Contact delivery needs `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` (see `.env.example`). The browser posts straight to `https://api.web3forms.com/submit`; there is no `/api/contact` route. The `NEXT_PUBLIC_` prefix is deliberate — Web3Forms' free plan expects a client-side submission, and a server-side proxy needs a paid plan with a safelisted IP. Without the key the form shows an error pointing at the direct email address.
 
+The form posts a `FormData` body. Do **not** set `Content-Type` by hand — only the browser knows the multipart boundary token, and setting the header manually omits it and makes the body unparseable. `FormData` also avoids the CORS preflight that a JSON body triggers, so it is one round trip rather than two.
+
+Two FormData quirks the form depends on:
+
+- An unchecked `botcheck` is absent from `FormData` entirely, which is exactly what Web3Forms expects — leave it alone.
+- A `<select>` whose placeholder option is `disabled` counts as having *no* selection, so it is omitted too. `service` and `budget` are defaulted to `""` before zod runs; without that, visitors see "expected string, received undefined" instead of "Please pick a service."
+
 Two Cloudflare gotchas cost real debugging time here, so don't re-derive them:
 
 - Requests to `api.web3forms.com` with no `User-Agent`, or with a `HeadlessChrome` one, get a **403 HTML challenge page instead of JSON**. This looks exactly like an invalid access key. Headless browser tests must override the UA or they measure bot detection rather than the form.
