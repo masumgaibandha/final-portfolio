@@ -1,10 +1,9 @@
 import Image from "next/image";
-import { LuArrowDown, LuArrowUpRight } from "react-icons/lu";
+import { LuArrowDown } from "react-icons/lu";
 
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { hero, trustIndicators } from "@/data/hero";
-import { site } from "@/data/site";
 
 export function Hero() {
   return (
@@ -42,6 +41,7 @@ export function Hero() {
               {hero.description}
             </p>
 
+            {/* Two actions only — the résumé now lives in About, below the summary. */}
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <ButtonLink href="#projects" tone="action" size="lg">
                 View My Projects
@@ -50,14 +50,6 @@ export function Hero() {
               <ButtonLink href="#contact" tone="outline" size="lg">
                 Start a Project
               </ButtonLink>
-              <a
-                href={site.resumeUrl}
-                download
-                className="text-ink hover:text-action decoration-action focus-visible:outline-action inline-flex items-center gap-1.5 rounded-sm text-sm font-medium underline decoration-2 underline-offset-[6px] transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4"
-              >
-                Download My Résumé
-                <LuArrowUpRight className="size-4" aria-hidden="true" />
-              </a>
             </div>
           </div>
 

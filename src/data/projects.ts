@@ -30,9 +30,9 @@ export const projects: readonly Project[] = [
     ],
     image: {
       src: "/projects/dentflow.webp",
-      width: 1200,
-      height: 900,
-      alt: "The DentFlow landing page, headlined “Run your clinic with clarity”, with navigation for Dashboard, Services and Manage Services.",
+      width: 1154,
+      height: 852,
+      alt: "The DentFlow landing page in a browser window, headlined “Run your clinic with clarity. Care for patients with confidence.”, with navigation for Dashboard, Services and Manage Services.",
     },
   },
   {
@@ -61,9 +61,9 @@ export const projects: readonly Project[] = [
     ],
     image: {
       src: "/projects/skillpath-ai.webp",
-      width: 1200,
-      height: 900,
-      alt: "The SkillPath AI course-discovery interface, headlined “Find the right course, fast”, above a “How it works” row.",
+      width: 1168,
+      height: 815,
+      alt: "The SkillPath AI app, headlined “Find the right course, fast”, above a “How it works” row of search, enrol, study-plan and chat steps.",
     },
   },
   {

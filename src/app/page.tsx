@@ -24,7 +24,7 @@ export default function Home() {
 
       <main id="main">
         {/*
-         * Development leads: Services â†’ Projects â†’ Testimonials establish the
+         * Development leads: Services → Projects → Testimonials establish the
          * primary positioning before the outreach tooling appears.
          */}
         <Hero />

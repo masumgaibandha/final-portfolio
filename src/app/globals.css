@@ -165,20 +165,17 @@
     box-shadow: 0 12px 28px -12px rgb(26 24 21 / 0.18);
   }
 
-  /* Paired with `overflow-hidden` on the image wrapper. */
-  & img {
-    transition: transform 220ms var(--ease-out-quad);
-  }
-
-  &:hover img {
-    transform: scale(1.02);
-  }
+  /*
+   * No image scale on hover. The project screenshots use `object-contain`, so
+   * the rendered image already touches its box on one axis — scaling it up
+   * would push those edges outside and clip the browser frame, which is the
+   * one thing these cards exist to show. The card lift carries the hover.
+   */
 
   @media (prefers-reduced-motion: reduce) {
     transition: border-color 220ms linear;
 
-    &:hover,
-    &:hover img {
+    &:hover {
       transform: none;
     }
   }

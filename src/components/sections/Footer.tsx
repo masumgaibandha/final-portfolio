@@ -8,7 +8,7 @@ import { navLinks, site, socialLinks } from "@/data/site";
 const quickLinks = [
   ...navLinks.filter((link) => link.href !== "/#home"),
   { label: "Resources", href: "/resources" },
-  { label: "RÃ©sumÃ©", href: site.resumeUrl },
+  { label: "Résumé", href: site.resumeUrl },
 ];
 
 const linkClass =
@@ -80,7 +80,7 @@ export function Footer() {
         <Container className="flex flex-col gap-3 py-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-on-dark-muted text-xs">{footer.copyright}</p>
           <p className="text-on-dark-muted text-xs">
-            Built with Next.js &amp; Tailwind CSS Â·{" "}
+            Built with Next.js &amp; Tailwind CSS ·{" "}
             <a
               href={site.repoUrl}
               target="_blank"

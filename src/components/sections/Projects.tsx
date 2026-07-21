@@ -30,21 +30,34 @@ export function Projects() {
                 project.image ? "lg:grid-cols-2" : ""
               } ${project.image ? "card-interactive" : "card-static"}`}
             >
+              {/*
+               * `object-contain` on a neutral panel, never `object-cover`: the
+               * three sources have different native ratios (4:3, 4:3 and 5:6),
+               * so any single crop box would slice one of them — it was cutting
+               * the left edge off the DentFlow browser frame. Contain letterboxes
+               * instead, so every screenshot is whole and undistorted. The
+               * padding keeps the frame edges off the card border.
+               *
+               * First in DOM order, so mobile stacks the image above the copy;
+               * `lg:order-2` only alternates sides once there are two columns.
+               */}
               {project.image ? (
                 <div
-                  className={`bg-canvas-alt relative aspect-[3/2] overflow-hidden lg:aspect-auto lg:min-h-full ${
-                    index % 2 === 1 ? "lg:order-2" : ""
-                  }`}
+                  className={`bg-canvas-alt border-hairline relative aspect-[4/3] p-5 lg:aspect-auto lg:h-full lg:p-7 ${
+                    index % 2 === 1
+                      ? "lg:order-2 lg:border-l lg:border-b-0"
+                      : "lg:border-r lg:border-b-0"
+                  } border-b`}
                 >
                   <Image
                     src={project.image.src}
                     alt={project.image.alt}
                     width={project.image.width}
                     height={project.image.height}
-                    /* Below the fold on every breakpoint. */
+                    /* Below the fold at every breakpoint. */
                     loading="lazy"
                     sizes="(min-width: 1024px) 50vw, 100vw"
-                    className="size-full object-cover object-top"
+                    className="size-full object-contain object-center"
                   />
                 </div>
               ) : null}
