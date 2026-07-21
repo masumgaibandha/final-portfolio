@@ -8,7 +8,7 @@ import { outreachQuote, pricingIntro, pricingTiers } from "@/data/pricing";
 
 export function Pricing() {
   return (
-    <Section id="pricing" tone="surface" labelledBy="pricing-heading">
+    <Section id="pricing" labelledBy="pricing-heading">
       <SectionHeading
         label={pricingIntro.label}
         heading={pricingIntro.heading}

@@ -5,9 +5,25 @@ import { LuArrowRight, LuCircleCheck, LuTriangleAlert } from "react-icons/lu";
 
 import { buttonClass } from "@/components/ui/Button";
 import { budgetOptions, serviceOptions } from "@/data/contact";
+import { site } from "@/data/site";
 import { contactSchema } from "@/lib/contact-schema";
 
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+
+/*
+ * Public by design. Web3Forms' free plan expects the browser to post directly,
+ * so the key ships in the bundle — that is the documented architecture, and the
+ * key only ever grants "send a message to the owner's inbox". A server-side
+ * proxy would need a paid plan with a safelisted IP.
+ */
+const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+
 type Status = "idle" | "submitting" | "success" | "error";
+
+const labelFor = (
+  options: readonly { value: string; label: string }[],
+  value: string,
+) => options.find((option) => option.value === value)?.label ?? value;
 
 const fieldClass =
   "border-ink/15 bg-bg text-ink placeholder:text-muted/70 focus-visible:border-ink focus-visible:outline-accent w-full rounded-lg border px-4 py-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
@@ -28,7 +44,11 @@ export function ContactForm() {
     setFormError(null);
 
     const formData = new FormData(event.currentTarget);
-    const parsed = contactSchema.safeParse(Object.fromEntries(formData));
+    const raw = Object.fromEntries(formData);
+    const parsed = contactSchema.safeParse({
+      ...raw,
+      botcheck: formData.get("botcheck") === "on",
+    });
 
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
@@ -42,30 +62,92 @@ export function ContactForm() {
     }
 
     setErrors({});
+
+    if (!ACCESS_KEY) {
+      console.error(
+        "Contact form is not configured: NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY is missing at build time.",
+      );
+      setFormError(
+        `The form isn’t configured yet. Please email me directly at ${site.email}.`,
+      );
+      setStatus("error");
+      return;
+    }
+
     setStatus("submitting");
 
+    const { name, email, company, service, budget, message, botcheck } =
+      parsed.data;
+
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(WEB3FORMS_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: ACCESS_KEY,
+          subject: `New project enquiry — ${name}`,
+          from_name: site.name,
+          name,
+          email,
+          company: company || "—",
+          service: labelFor(serviceOptions, service),
+          budget: labelFor(budgetOptions, budget),
+          message,
+          botcheck: Boolean(botcheck),
+        }),
       });
 
-      if (!response.ok) {
-        const body: unknown = await response.json().catch(() => null);
-        const message =
-          body && typeof body === "object" && "error" in body
-            ? String((body as { error: unknown }).error)
-            : "Something went wrong. Please email me directly instead.";
-        setFormError(message);
+      /*
+       * Read as text first: Web3Forms can answer with a non-JSON body (e.g. a
+       * Cloudflare challenge page), and `.json()` would throw away the only
+       * useful evidence of what actually happened.
+       */
+      const bodyText = await response.text();
+      let result: unknown = null;
+      try {
+        result = JSON.parse(bodyText);
+      } catch {
+        /* Left null; logged below. */
+      }
+
+      const reportedSuccess =
+        typeof result === "object" &&
+        result !== null &&
+        (result as { success?: unknown }).success === true;
+
+      /* Both signals must agree before anything is called a success. */
+      if (!response.ok || !reportedSuccess) {
+        const detail =
+          typeof result === "object" &&
+          result !== null &&
+          typeof (result as { message?: unknown }).message === "string"
+            ? (result as { message: string }).message
+            : bodyText.slice(0, 200);
+
+        /* Safe to log: status and Web3Forms' own message. Never the key. */
+        console.error(
+          "[contact] Web3Forms did not confirm the submission.",
+          "status:",
+          response.status,
+          "detail:",
+          detail,
+        );
+
+        setFormError(
+          `Your message could not be sent (${response.status}). Please email me directly at ${site.email}.`,
+        );
         setStatus("error");
         return;
       }
 
       setStatus("success");
-    } catch {
+    } catch (error) {
+      console.error("[contact] Network error reaching Web3Forms:", error);
       setFormError(
-        "Your message could not be sent. Please email me directly instead.",
+        `Your message could not be sent. Please email me directly at ${site.email}.`,
       );
       setStatus("error");
     }
@@ -83,7 +165,14 @@ export function ContactForm() {
         </h3>
         <p className="text-muted mt-3 max-w-prose leading-relaxed">
           I read every enquiry personally and usually reply within one business
-          day.
+          day. If you don’t hear back, email me directly at{" "}
+          <a
+            href={`mailto:${site.email}`}
+            className="text-ink decoration-accent font-medium underline decoration-2 underline-offset-4"
+          >
+            {site.email}
+          </a>
+          .
         </p>
       </div>
     );
@@ -224,24 +313,31 @@ export function ContactForm() {
         </Field>
       </div>
 
-      {/* Honeypot — hidden from people, tempting to bots. */}
-      <div aria-hidden="true" className="absolute left-[-9999px]">
-        <label htmlFor={fieldId("website")}>Website</label>
+      {/* Web3Forms' honeypot. Hidden from people, tempting to bots. */}
+      <label
+        htmlFor={fieldId("botcheck")}
+        className="absolute left-[-9999px]"
+        aria-hidden="true"
+      >
+        Leave this field empty
         <input
-          id={fieldId("website")}
-          name="website"
-          type="text"
+          id={fieldId("botcheck")}
+          type="checkbox"
+          name="botcheck"
           tabIndex={-1}
           autoComplete="off"
         />
-      </div>
+      </label>
 
       {formError ? (
         <p
           role="alert"
           className="text-ink border-ink/10 bg-peach mt-6 flex items-start gap-2.5 border p-4 text-sm"
         >
-          <LuTriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+          <LuTriangleAlert
+            className="mt-0.5 size-4 shrink-0"
+            aria-hidden="true"
+          />
           {formError}
         </p>
       ) : null}

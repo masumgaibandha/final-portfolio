@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LuMenu, LuX } from "react-icons/lu";
 
@@ -58,18 +59,18 @@ export function MobileNav() {
             <ul className="flex flex-col">
               {navLinks.map((link) => (
                 <li key={link.href} className="border-ink/8 border-b">
-                  <a
+                  <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
                     className="font-heading text-ink focus-visible:outline-accent block py-5 text-2xl focus-visible:outline-2 focus-visible:-outline-offset-2"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
-            <a
-              href="#contact"
+            <Link
+              href="/#contact"
               onClick={() => setIsOpen(false)}
               className={buttonClass({
                 tone: "ink",
@@ -79,7 +80,7 @@ export function MobileNav() {
               })}
             >
               Let’s Talk
-            </a>
+            </Link>
           </nav>
         </div>
       ) : null}

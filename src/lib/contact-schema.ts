@@ -22,11 +22,10 @@ export const contactSchema = z.object({
     .min(20, "Please share at least a couple of sentences.")
     .max(4000),
   /*
-   * Honeypot: real people leave this empty. It must stay permissive here so a
-   * filled value reaches the Route Handler, which accepts it with a 200 — a
-   * validation error would tell the bot exactly which field gave it away.
+   * Web3Forms' own honeypot field name. It rejects any submission where
+   * `botcheck` is truthy, so the name matters — do not rename it.
    */
-  website: z.string().max(200).optional(),
+  botcheck: z.boolean().optional(),
 });
 
 export type ContactInput = z.infer<typeof contactSchema>;

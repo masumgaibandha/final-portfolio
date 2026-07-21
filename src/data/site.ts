@@ -15,14 +15,19 @@ export const site = {
     "Full-stack developer building fast Next.js and MERN web apps. I also help B2B teams with cold email outreach, lead generation, and LinkedIn prospecting.",
 } as const;
 
+/*
+ * Root-relative (`/#about`, not `#about`) so these resolve correctly from
+ * /resources as well as the homepage. On the homepage Next still treats them as
+ * in-page scrolls.
+ */
 export const navLinks: readonly NavLink[] = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Projects", href: "#projects" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/#home" },
+  { label: "About", href: "/#about" },
+  { label: "Services", href: "/#services" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Testimonials", href: "/#testimonials" },
+  { label: "Pricing", href: "/#pricing" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export const socialLinks: readonly SocialLink[] = [

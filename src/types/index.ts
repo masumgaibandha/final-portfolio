@@ -65,6 +65,21 @@ export interface SelectOption {
   label: string;
 }
 
+export interface AffiliateTool {
+  id: string;
+  name: string;
+  category: string;
+  heading: string;
+  description: string;
+  usedFor: readonly string[];
+  ctaLabel: string;
+  /** Affiliate URL, copied exactly from portfolio-content.md. */
+  href: string;
+  /** Row in the /resources comparison table. */
+  bestFor: string;
+  useCase: string;
+}
+
 export interface SocialLink {
   label: string;
   href: string;

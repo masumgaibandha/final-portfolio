@@ -6,7 +6,8 @@ import { footer } from "@/data/contact";
 import { navLinks, site, socialLinks } from "@/data/site";
 
 const quickLinks = [
-  ...navLinks.filter((link) => link.href !== "#home"),
+  ...navLinks.filter((link) => link.href !== "/#home"),
+  { label: "Resources", href: "/resources" },
   { label: "Résumé", href: site.resumeUrl },
 ];
 

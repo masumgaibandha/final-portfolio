@@ -4,9 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-A premium, editorial-style personal portfolio for Masum — full-stack developer and cold email outreach specialist. Single marketing page with nine sections in this order: **Navbar, Hero, About, Services, Projects, Testimonials, Pricing, Contact, Footer.**
+A premium, editorial-style personal portfolio for Masum — full-stack developer and cold email outreach specialist. Homepage sections in this order: **Navbar, Hero, About, Services, Outreach Stack, Projects, Testimonials, Pricing, Contact, Footer**, plus a `/resources` page.
 
 The standalone CTA band that once sat between Pricing and Contact was removed — back to back, the two read as the same ask twice. Its copy now introduces the contact form. Don't reintroduce it.
+
+**Affiliate content** (Outreach Stack section + `/resources`) is approved copy from `portfolio-content.md` § "Recommended Outreach Tools", mirrored into `src/data/resources.ts`. Rules that are not stylistic preferences:
+
+- Affiliate tools are **recommendations, never a service**. They must not appear in the hero, About, Services, or the primary positioning.
+- The disclosure renders directly beneath the tool cards on both surfaces — the footer disclosure does not satisfy this.
+- Affiliate URLs are copied character for character; a mistyped `via` parameter silently drops attribution.
+- Every affiliate link goes through `AffiliateLink`, which hardcodes `target="_blank"` and `rel="sponsored nofollow noopener noreferrer"` so no call site can ship a monetised link without them.
 
 ## Project status
 
@@ -14,7 +21,12 @@ Scaffolded and building. Next.js 16 (App Router, Turbopack), React 19, Tailwind 
 
 Environment: Node v22.17.0, npm 10.9.2, git 2.50.0. The repo is **not** under version control yet.
 
-Contact delivery needs `WEB3FORMS_ACCESS_KEY` (see `.env.example`). Without it the Route Handler returns 503 and the form tells visitors to email directly — that is the intended unconfigured behaviour, not a bug. The key is read server-side only and must never gain a `NEXT_PUBLIC_` prefix.
+Contact delivery needs `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` (see `.env.example`). The browser posts straight to `https://api.web3forms.com/submit`; there is no `/api/contact` route. The `NEXT_PUBLIC_` prefix is deliberate — Web3Forms' free plan expects a client-side submission, and a server-side proxy needs a paid plan with a safelisted IP. Without the key the form shows an error pointing at the direct email address.
+
+Two Cloudflare gotchas cost real debugging time here, so don't re-derive them:
+
+- Requests to `api.web3forms.com` with no `User-Agent`, or with a `HeadlessChrome` one, get a **403 HTML challenge page instead of JSON**. This looks exactly like an invalid access key. Headless browser tests must override the UA or they measure bot detection rather than the form.
+- Web3Forms returning `{"success":true}` means *accepted*, not *delivered*. Never report an email as delivered on the strength of the API response alone.
 
 ## Commands
 
@@ -34,7 +46,7 @@ No test runner is configured. Don't reference one until it's actually installed.
 - **Tailwind CSS v4** — CSS-first config, **no `tailwind.config.ts`**
 - **HeroUI v3** (`@heroui/react`) — note this is the v3 rewrite, not v2: there is no `HeroUIProvider`, no `@heroui/theme` package, and no Tailwind plugin. It is CSS-first (`@import "@heroui/react/styles"`) and is rethemed by overriding its plain custom properties. Components ship their own `"use client"`.
 - **React Icons** (`react-icons`) — prefer one family site-wide (`react-icons/lu` or `/fi`); don't mix sets
-- **zod** + **Web3Forms** — contact form Route Handler only. Submissions are proxied server-side rather than posted from the browser, which is what keeps the access key out of the client bundle.
+- **zod** + **Web3Forms** — contact form only. zod validates in the browser before the form posts directly to Web3Forms.
 
 ## Design tokens
 
@@ -89,7 +101,7 @@ Editorial scale: display type is large and tight — hero around `clamp(3rem, 8v
 src/app/layout.tsx          fonts, HeroUIProvider, root metadata, JSON-LD
 src/app/page.tsx            composes the ten sections in order
 src/app/globals.css         @theme tokens, base layer
-src/app/api/contact/route.ts  zod validation → Web3Forms
+src/app/resources/page.tsx  affiliate tools page (own metadata + canonical)
 src/components/sections/    one file per section (Hero.tsx, Services.tsx, …)
 src/components/ui/          Container, Section, SectionHeading, button wrappers
 src/data/                   typed content arrays
