@@ -18,7 +18,7 @@ const labelFor = (
 ) => options.find((option) => option.value === value)?.label ?? value;
 
 const fieldClass =
-  "border-ink/15 bg-bg text-ink placeholder:text-muted/70 focus-visible:border-ink focus-visible:outline-accent w-full rounded-lg border px-4 py-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
+  "border-hairline bg-canvas text-ink placeholder:text-ink-muted/70 focus-visible:border-ink focus-visible:outline-action w-full rounded-lg border px-4 py-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
 
 const labelClass = "text-ink block text-sm font-medium";
 
@@ -178,18 +178,18 @@ export function ContactForm() {
     return (
       <div
         role="status"
-        className="border-ink/10 bg-cream flex h-full flex-col items-start justify-center border p-8 md:p-10"
+        className="border-hairline bg-surface flex h-full flex-col items-start justify-center border p-8 md:p-10"
       >
-        <LuCircleCheck className="text-accent size-8" aria-hidden="true" />
+        <LuCircleCheck className="text-action size-8" aria-hidden="true" />
         <h3 className="font-heading text-ink mt-5 text-2xl tracking-tight">
           Thanks — your details are on their way.
         </h3>
-        <p className="text-muted mt-3 max-w-prose leading-relaxed">
+        <p className="text-ink-muted mt-3 max-w-prose leading-relaxed">
           I read every enquiry personally and usually reply within one business
           day. If you don’t hear back, email me directly at{" "}
           <a
             href={`mailto:${site.email}`}
-            className="text-ink decoration-accent font-medium underline decoration-2 underline-offset-4"
+            className="text-ink decoration-action font-medium underline decoration-2 underline-offset-4"
           >
             {site.email}
           </a>
@@ -203,7 +203,7 @@ export function ContactForm() {
     <form
       onSubmit={onSubmit}
       noValidate
-      className="border-ink/10 bg-cream border p-8 md:p-10"
+      className="border-hairline bg-surface border p-8 md:p-10"
     >
       <div className="grid gap-6 sm:grid-cols-2">
         <Field
@@ -353,7 +353,7 @@ export function ContactForm() {
       {formError ? (
         <p
           role="alert"
-          className="text-ink border-ink/10 bg-peach mt-6 flex items-start gap-2.5 border p-4 text-sm"
+          className="text-ink border-hairline bg-accent mt-6 flex items-start gap-2.5 border p-4 text-sm"
         >
           <LuTriangleAlert
             className="mt-0.5 size-4 shrink-0"
@@ -405,7 +405,7 @@ function Field({
       <label htmlFor={id} className={labelClass}>
         {label}
         {optional ? (
-          <span className="text-muted font-normal"> (optional)</span>
+          <span className="text-ink-muted font-normal"> (optional)</span>
         ) : null}
       </label>
       <div className="mt-2">{children}</div>

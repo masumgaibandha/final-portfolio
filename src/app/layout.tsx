@@ -13,11 +13,19 @@ const playfair = Playfair_Display({
   display: "swap",
 });
 
+/*
+ * `optional` rather than `swap` for the body face. The hero paragraph is the
+ * LCP element on mobile (the portrait sits below the fold there), and a late
+ * swap repainted it at 3.6s against a 1.2s FCP. `optional` gives the font a
+ * short window and otherwise keeps the metric-matched fallback for that page
+ * view, so the largest paint lands with the first paint. On any normal
+ * connection Poppins still wins the race and renders as designed.
+ */
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-poppins",
-  display: "swap",
+  display: "optional",
 });
 
 export const metadata: Metadata = {

@@ -16,15 +16,21 @@ export function Hero() {
       />
 
       <Container className="pt-12 pb-24 md:pt-16 md:pb-32">
+        {/*
+         * Deliberately no `data-reveal` on the hero: it starts at opacity 0
+         * until hydration runs the observer, which made the hero copy the LCP
+         * element at 3.8s despite a 1.2s FCP. Above-the-fold content paints
+         * immediately; the reveal is for what you scroll to.
+         */}
         <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
-          <div data-reveal>
-            <p className="text-muted text-sm font-medium tracking-[0.14em] uppercase">
+          <div>
+            <p className="text-ink-muted text-sm font-medium tracking-[0.14em] uppercase">
               {hero.eyebrow}
             </p>
 
             <h1
               id="hero-heading"
-              className="text-display text-ink mt-6 text-balance"
+              className="type-display text-ink mt-6 text-balance"
             >
               {hero.headline}
               <span className="font-heading block font-normal italic">
@@ -32,12 +38,12 @@ export function Hero() {
               </span>
             </h1>
 
-            <p className="text-muted mt-8 max-w-prose text-base leading-relaxed md:text-lg">
+            <p className="text-ink-muted mt-8 max-w-prose text-base leading-relaxed md:text-lg">
               {hero.description}
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-3">
-              <ButtonLink href="#projects" tone="ink" size="lg">
+              <ButtonLink href="#projects" tone="action" size="lg">
                 View My Projects
                 <LuArrowDown className="size-4" aria-hidden="true" />
               </ButtonLink>
@@ -47,7 +53,7 @@ export function Hero() {
               <a
                 href={site.resumeUrl}
                 download
-                className="text-ink decoration-accent hover:decoration-ink focus-visible:outline-accent inline-flex items-center gap-1.5 rounded-sm text-sm font-medium underline decoration-2 underline-offset-[6px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
+                className="text-ink hover:text-action decoration-action focus-visible:outline-action inline-flex items-center gap-1.5 rounded-sm text-sm font-medium underline decoration-2 underline-offset-[6px] transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4"
               >
                 Download My Résumé
                 <LuArrowUpRight className="size-4" aria-hidden="true" />
@@ -58,30 +64,27 @@ export function Hero() {
           {/*
            * The portrait ships with its own warm backdrop baked in, so it sits
            * inside a matching panel rather than being cut out — a hard edge
-           * against the page would read as a mistake.
+           * against the page would read as a mistake. Cropped to a portrait
+           * ratio because the 4:3 source leaves the subject too small.
            */}
-          <div className="relative" data-reveal>
-            {/*
-             * The source is 4:3 with wide empty margins, so it is cropped to a
-             * portrait ratio — otherwise the subject reads far too small in the
-             * column.
-             */}
-            <div className="border-ink/8 bg-cream relative aspect-[4/5] overflow-hidden rounded-[2rem] border sm:aspect-[5/5] lg:aspect-[4/5]">
+          <div className="relative">
+            <div className="border-hairline bg-canvas-alt relative aspect-[4/5] overflow-hidden rounded-[2rem] border sm:aspect-square lg:aspect-[4/5]">
               <Image
-                src="/masum.png"
+                src="/masum.webp"
                 alt="Abdullah Al Masum, full-stack developer and B2B outreach specialist"
-                width={1448}
-                height={1086}
+                width={1100}
+                height={825}
                 priority
-                sizes="(min-width: 1024px) 45vw, 100vw"
+                fetchPriority="high"
+                sizes="(min-width: 1024px) 45vw, (min-width: 640px) 90vw, 100vw"
                 className="size-full object-cover object-[center_20%]"
               />
             </div>
 
-            <p className="border-ink/8 bg-bg absolute bottom-5 left-5 inline-flex items-center gap-2.5 rounded-full border py-2.5 pr-5 pl-4 text-xs font-medium sm:text-sm">
+            <p className="border-hairline bg-surface absolute bottom-5 left-5 inline-flex items-center gap-2.5 rounded-full border py-2.5 pr-5 pl-4 text-xs font-medium shadow-[0_2px_8px_-4px_rgb(26_24_21/0.15)] sm:text-sm">
               <span
                 aria-hidden="true"
-                className="bg-accent size-2 shrink-0 rounded-full"
+                className="bg-action size-2 shrink-0 rounded-full"
               />
               {hero.availability}
             </p>
@@ -90,7 +93,7 @@ export function Hero() {
 
         {/* Trust indicators — factual Upwork numbers, set as an editorial strip. */}
         <dl
-          className="border-ink/10 mt-20 grid grid-cols-2 gap-x-8 gap-y-10 border-t pt-10 md:grid-cols-4"
+          className="border-hairline mt-20 grid grid-cols-2 gap-x-8 gap-y-10 border-t pt-10 md:grid-cols-4"
           data-reveal
         >
           {trustIndicators.map((indicator) => (
@@ -100,7 +103,7 @@ export function Hero() {
                 <span className="font-heading text-ink block text-3xl tracking-tight md:text-4xl">
                   {indicator.value}
                 </span>
-                <span className="text-muted mt-2 block text-sm">
+                <span className="text-ink-muted mt-2 block text-sm">
                   {indicator.label}
                 </span>
               </dd>

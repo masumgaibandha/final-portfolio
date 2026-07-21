@@ -8,7 +8,7 @@ import { testimonials, testimonialsIntro } from "@/data/testimonials";
 
 export function Testimonials() {
   return (
-    <Section id="testimonials" tone="surface" labelledBy="testimonials-heading">
+    <Section id="testimonials" tone="canvas" labelledBy="testimonials-heading">
       <SectionHeading
         label={testimonialsIntro.label}
         heading={testimonialsIntro.heading}
@@ -24,8 +24,8 @@ export function Testimonials() {
       <ul className="mt-16 grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {testimonials.map((testimonial) => (
           <li key={testimonial.id} className="h-full" data-reveal>
-            <figure className="border-ink/10 flex h-full flex-col border bg-white p-7">
-              <p className="text-muted text-xs font-semibold tracking-[0.16em] uppercase">
+            <figure className="border-hairline flex h-full flex-col border bg-surface p-7">
+              <p className="text-ink-muted text-xs font-semibold tracking-[0.16em] uppercase">
                 <span className="sr-only">Reviewed on </span>
                 {testimonial.source}
               </p>
@@ -40,11 +40,11 @@ export function Testimonials() {
                 <p>“{testimonial.quote}”</p>
               </blockquote>
 
-              <figcaption className="border-ink/10 mt-auto border-t pt-5">
+              <figcaption className="border-hairline mt-auto border-t pt-5">
                 <span className="text-ink block text-sm font-medium">
                   {testimonial.attribution}
                 </span>
-                <span className="text-muted mt-1 block text-sm break-words">
+                <span className="text-ink-muted mt-1 block text-sm break-words">
                   {testimonial.context}
                 </span>
               </figcaption>

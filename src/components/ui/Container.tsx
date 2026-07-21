@@ -1,4 +1,4 @@
-import { cn } from "@heroui/react";
+import { cn } from "tailwind-variants";
 import type { ReactNode } from "react";
 
 interface ContainerProps {

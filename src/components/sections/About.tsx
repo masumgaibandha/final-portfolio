@@ -4,7 +4,7 @@ import { about, skillGroups } from "@/data/about";
 
 export function About() {
   return (
-    <Section id="about" tone="surface" labelledBy="about-heading">
+    <Section id="about" tone="canvasAlt" labelledBy="about-heading">
       <SectionHeading
         label={about.label}
         heading={about.heading}
@@ -19,7 +19,7 @@ export function About() {
               className={
                 index === 0
                   ? "text-ink max-w-prose text-lg leading-relaxed md:text-xl"
-                  : "text-muted max-w-prose leading-relaxed"
+                  : "text-ink-muted max-w-prose leading-relaxed"
               }
             >
               {paragraph}
@@ -27,20 +27,20 @@ export function About() {
           ))}
         </div>
 
-        <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-1" data-reveal>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1" data-reveal>
           {skillGroups.map((group) => (
             <div
               key={group.title}
-              className="border-ink/10 bg-cream border p-6 sm:p-7"
+              className="border-hairline bg-surface card-static border p-6 sm:p-7"
             >
               <h3 className="font-body text-ink text-xs font-semibold tracking-[0.16em] uppercase">
                 {group.title}
               </h3>
-              <ul className="mt-4 flex flex-wrap gap-x-2 gap-y-2">
+              <ul className="mt-4 flex flex-wrap gap-2">
                 {group.items.map((item) => (
                   <li
                     key={item}
-                    className="border-ink/10 text-muted rounded-full border px-3 py-1.5 text-[0.8rem] leading-none"
+                    className="border-hairline text-ink-muted rounded-full border px-3 py-1.5 text-[0.8rem] leading-none"
                   >
                     {item}
                   </li>

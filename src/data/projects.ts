@@ -28,6 +28,12 @@ export const projects: readonly Project[] = [
       { label: "Live site", href: "https://dentflow-eight.vercel.app/", primary: true },
       { label: "GitHub", href: "https://github.com/masumgaibandha/dentflow" },
     ],
+    image: {
+      src: "/projects/dentflow.webp",
+      width: 1200,
+      height: 900,
+      alt: "The DentFlow landing page, headlined “Run your clinic with clarity”, with navigation for Dashboard, Services and Manage Services.",
+    },
   },
   {
     id: "skillpath-ai",
@@ -53,6 +59,12 @@ export const projects: readonly Project[] = [
       },
       { label: "GitHub", href: "https://github.com/masumgaibandha/skillpath-ai" },
     ],
+    image: {
+      src: "/projects/skillpath-ai.webp",
+      width: 1200,
+      height: 900,
+      alt: "The SkillPath AI course-discovery interface, headlined “Find the right course, fast”, above a “How it works” row.",
+    },
   },
   {
     id: "taskforge",
@@ -85,6 +97,13 @@ export const projects: readonly Project[] = [
         href: "https://github.com/masumgaibandha/taskforge-server",
       },
     ],
+    image: {
+      /* Cropped to the app region — see the note in the conversion script. */
+      src: "/projects/taskforge.webp",
+      width: 876,
+      height: 1024,
+      alt: "The TaskForge marketplace app showing featured freelance tasks with budgets, and a Top Freelancers list.",
+    },
   },
   {
     id: "b2b-outreach-system",
@@ -104,5 +123,10 @@ export const projects: readonly Project[] = [
     tags: ["Cold Email", "Deliverability", "Lead Generation", "Automation"],
     /* Client engagements, so there is nothing public to link to. */
     links: [],
+    /*
+     * No `image`: this is a delivery process across client accounts, not a
+     * product with a UI, and no genuine screenshot of it exists in resources/.
+     * The card renders a typographic panel instead of a fabricated one.
+     */
   },
 ];

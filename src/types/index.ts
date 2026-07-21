@@ -28,6 +28,13 @@ export interface ProjectLink {
   primary?: boolean;
 }
 
+export interface ProjectImage {
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -38,6 +45,11 @@ export interface Project {
   tags: readonly string[];
   /** Live site and source repositories. Empty while a project has no public URL. */
   links: readonly ProjectLink[];
+  /**
+   * A real screenshot of the shipped product. Omitted rather than substituted
+   * when no genuine capture exists — never a stock or generated stand-in.
+   */
+  image?: ProjectImage;
 }
 
 export interface Testimonial {

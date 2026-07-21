@@ -1,4 +1,4 @@
-import { LuArrowRight, LuCheck } from "react-icons/lu";
+﻿import { LuArrowRight, LuCheck } from "react-icons/lu";
 
 import { ButtonLink } from "@/components/ui/Button";
 import { Section } from "@/components/ui/Section";
@@ -18,12 +18,12 @@ export function Services() {
         {services.map((service, index) => (
           <li
             key={service.id}
-            className="border-ink/10 grid gap-8 border-t py-12 md:grid-cols-[0.9fr_1.1fr] md:gap-12 lg:gap-20"
+            className="border-hairline grid gap-8 border-t py-12 md:grid-cols-[0.9fr_1.1fr] md:gap-12 lg:gap-20"
             data-reveal
           >
             <div>
               <span
-                className="text-muted font-heading block text-sm"
+                className="text-ink-muted font-heading block text-sm"
                 aria-hidden="true"
               >
                 {String(index + 1).padStart(2, "0")}
@@ -31,7 +31,7 @@ export function Services() {
               <h3 className="font-heading text-ink mt-3 text-2xl tracking-tight md:text-3xl">
                 {service.title}
               </h3>
-              <p className="text-muted mt-5 max-w-prose leading-relaxed">
+              <p className="text-ink-muted mt-5 max-w-prose leading-relaxed">
                 {service.summary}
               </p>
               <ButtonLink
@@ -45,14 +45,14 @@ export function Services() {
             </div>
 
             <div>
-              <h4 className="font-body text-muted text-xs font-semibold tracking-[0.16em] uppercase">
+              <h4 className="font-body text-ink-muted text-xs font-semibold tracking-[0.16em] uppercase">
                 Services include
               </h4>
               <ul className="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2">
                 {service.includes.map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm">
                     <LuCheck
-                      className="text-accent mt-0.5 size-4 shrink-0"
+                      className="text-action mt-0.5 size-4 shrink-0"
                       aria-hidden="true"
                     />
                     <span className="text-ink">{item}</span>

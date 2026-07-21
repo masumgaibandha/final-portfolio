@@ -1,4 +1,4 @@
-import { cn } from "@heroui/react";
+import { cn } from "tailwind-variants";
 import { LuArrowRight, LuCheck } from "react-icons/lu";
 
 import { ButtonLink } from "@/components/ui/Button";
@@ -25,8 +25,8 @@ export function Pricing() {
             className={cn(
               "flex h-full flex-col border p-8",
               tier.featured
-                ? "border-ink bg-ink text-bg"
-                : "border-ink/10 bg-cream",
+                ? "border-ink bg-ink text-on-dark"
+                : "border-hairline bg-surface",
             )}
             data-reveal
           >
@@ -35,13 +35,14 @@ export function Pricing() {
               <h3
                 className={cn(
                   "font-heading text-2xl tracking-tight",
-                  tier.featured ? "text-bg" : "text-ink",
+                  tier.featured ? "text-on-dark" : "text-ink",
                 )}
               >
                 {tier.name}
               </h3>
+              {/* Pale yellow earns its keep here: ink-on-terracotta is only ~2.8:1. */}
               {tier.badge ? (
-                <span className="bg-accent text-ink rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap">
+                <span className="bg-accent text-accent-ink rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap">
                   {tier.badge}
                 </span>
               ) : null}
@@ -50,7 +51,7 @@ export function Pricing() {
             <p
               className={cn(
                 "mt-5 text-2xl font-semibold",
-                tier.featured ? "text-bg" : "text-ink",
+                tier.featured ? "text-on-dark" : "text-ink",
               )}
             >
               {tier.price}
@@ -59,7 +60,7 @@ export function Pricing() {
             <p
               className={cn(
                 "mt-4 text-sm leading-relaxed",
-                tier.featured ? "text-bg/70" : "text-muted",
+                tier.featured ? "text-on-dark-muted" : "text-ink-muted",
               )}
             >
               {tier.description}
@@ -69,10 +70,10 @@ export function Pricing() {
               {tier.includes.map((item) => (
                 <li key={item} className="flex items-start gap-3 text-sm">
                   <LuCheck
-                    className="text-accent mt-0.5 size-4 shrink-0"
+                    className="text-action mt-0.5 size-4 shrink-0"
                     aria-hidden="true"
                   />
-                  <span className={tier.featured ? "text-bg/90" : "text-ink"}>
+                  <span className={tier.featured ? "text-on-dark/90" : "text-ink"}>
                     {item}
                   </span>
                 </li>
@@ -82,13 +83,13 @@ export function Pricing() {
             <div
               className={cn(
                 "mt-auto border-t pt-6",
-                tier.featured ? "border-bg/15 mt-8" : "border-ink/10 mt-8",
+                tier.featured ? "border-on-dark/15 mt-8" : "border-hairline mt-8",
               )}
             >
               <p
                 className={cn(
                   "text-sm",
-                  tier.featured ? "text-bg/70" : "text-muted",
+                  tier.featured ? "text-on-dark-muted" : "text-ink-muted",
                 )}
               >
                 <span className="font-medium">Estimated timeline:</span>{" "}
@@ -96,7 +97,7 @@ export function Pricing() {
               </p>
               <ButtonLink
                 href="#contact"
-                tone={tier.featured ? "accent" : "outline"}
+                tone={tier.featured ? "onDark" : "outline"}
                 fullWidth
                 className="mt-6"
               >
@@ -109,14 +110,14 @@ export function Pricing() {
       </ul>
 
       <div
-        className="border-ink/10 mt-6 flex flex-col gap-6 border p-8 md:flex-row md:items-center md:justify-between md:p-10"
+        className="border-hairline mt-6 flex flex-col gap-6 border p-8 md:flex-row md:items-center md:justify-between md:p-10"
         data-reveal
       >
         <div className="max-w-2xl">
           <h3 className="font-heading text-ink text-xl tracking-tight md:text-2xl">
             {outreachQuote.heading}
           </h3>
-          <p className="text-muted mt-3 leading-relaxed">
+          <p className="text-ink-muted mt-3 leading-relaxed">
             {outreachQuote.description}
           </p>
         </div>

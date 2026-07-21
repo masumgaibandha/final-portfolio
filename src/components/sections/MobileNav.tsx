@@ -53,16 +53,16 @@ export function MobileNav() {
       {isOpen ? (
         <div
           id="mobile-nav-panel"
-          className="border-ink/8 bg-bg fixed inset-x-0 top-20 bottom-0 z-40 border-t lg:hidden"
+          className="border-hairline bg-canvas fixed inset-x-0 top-20 bottom-0 z-40 border-t lg:hidden"
         >
           <nav aria-label="Mobile" className="h-full overflow-y-auto px-6 py-8">
             <ul className="flex flex-col">
               {navLinks.map((link) => (
-                <li key={link.href} className="border-ink/8 border-b">
+                <li key={link.href} className="border-hairline border-b">
                   <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="font-heading text-ink focus-visible:outline-accent block py-5 text-2xl focus-visible:outline-2 focus-visible:-outline-offset-2"
+                    className="font-heading text-ink focus-visible:outline-action block py-5 text-2xl focus-visible:outline-2 focus-visible:-outline-offset-2"
                   >
                     {link.label}
                   </Link>

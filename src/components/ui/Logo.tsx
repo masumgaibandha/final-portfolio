@@ -1,8 +1,8 @@
-import { cn } from "@heroui/react";
+import { cn } from "tailwind-variants";
 
 interface LogoProps {
-  /** `bg` inverts the mark for the dark footer. */
-  tone?: "ink" | "bg";
+  /** `onDark` inverts the mark for the dark bands. */
+  tone?: "ink" | "onDark";
   className?: string;
 }
 
@@ -16,13 +16,13 @@ export function Logo({ tone = "ink", className }: LogoProps) {
     <span
       className={cn(
         "font-heading inline-flex items-baseline leading-none tracking-[-0.02em] whitespace-nowrap",
-        tone === "bg" ? "text-bg" : "text-ink",
+        tone === "onDark" ? "text-on-dark" : "text-ink",
         className,
       )}
     >
       <span className="font-bold">Masum</span>
       <span className="font-normal italic">Dev</span>
-      <span className="text-accent" aria-hidden="true">
+      <span className="text-action" aria-hidden="true">
         .
       </span>
     </span>

@@ -1,4 +1,4 @@
-import { cn } from "@heroui/react";
+import { cn } from "tailwind-variants";
 import type { ReactNode } from "react";
 
 interface SectionHeadingProps {
@@ -10,6 +10,8 @@ interface SectionHeadingProps {
   description?: string;
   className?: string;
   align?: "start" | "between";
+  /** Inverts the palette for the dark bands. */
+  onDark?: boolean;
 }
 
 export function SectionHeading({
@@ -19,6 +21,7 @@ export function SectionHeading({
   description,
   className,
   align = "start",
+  onDark = false,
 }: SectionHeadingProps) {
   return (
     <div
@@ -31,22 +34,39 @@ export function SectionHeading({
       data-reveal
     >
       <div className={align === "between" ? "max-w-2xl" : undefined}>
-        <p className="flex items-center gap-3 text-xs font-semibold tracking-[0.18em] text-muted uppercase">
+        <p
+          className={cn(
+            "flex items-center gap-3 text-xs font-semibold tracking-[0.18em] uppercase",
+            onDark ? "text-on-dark-muted" : "text-ink-muted",
+          )}
+        >
           <span
             aria-hidden="true"
-            className="bg-accent h-px w-8 shrink-0"
+            className={cn(
+              "h-px w-8 shrink-0",
+              onDark ? "bg-action-dark" : "bg-action",
+            )}
           />
           {label}
         </p>
-        <h2 id={headingId} className="text-section text-ink mt-5 text-balance">
+        <h2
+          id={headingId}
+          className={cn(
+            "type-section mt-5 text-balance",
+            onDark ? "text-on-dark" : "text-ink",
+          )}
+        >
           {heading}
         </h2>
       </div>
       {description ? (
         <p
           className={cn(
-            "text-muted mt-6 text-base leading-relaxed md:text-lg",
-            align === "between" ? "lg:mt-0 lg:max-w-sm lg:text-base" : "max-w-prose",
+            "mt-6 text-base leading-relaxed md:text-lg",
+            onDark ? "text-on-dark-muted" : "text-ink-muted",
+            align === "between"
+              ? "lg:mt-0 lg:max-w-sm lg:text-base"
+              : "max-w-prose",
           )}
         >
           {description}

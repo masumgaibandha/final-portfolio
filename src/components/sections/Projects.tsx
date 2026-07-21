@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { LuArrowUpRight } from "react-icons/lu";
 
 import { ButtonLink } from "@/components/ui/Button";
@@ -7,7 +8,7 @@ import { projects, projectsIntro } from "@/data/projects";
 
 export function Projects() {
   return (
-    <Section id="projects" labelledBy="projects-heading">
+    <Section id="projects" tone="canvasAlt" labelledBy="projects-heading">
       <SectionHeading
         label={projectsIntro.label}
         heading={projectsIntro.heading}
@@ -16,92 +17,123 @@ export function Projects() {
         align="between"
       />
 
-      <ul className="mt-16 grid gap-6 lg:grid-cols-2">
-        {projects.map((project) => (
-          <li
-            key={project.id}
-            className="border-ink/10 bg-cream flex flex-col border p-8 md:p-10"
-            data-reveal
-          >
-            <p className="text-muted text-xs font-semibold tracking-[0.16em] uppercase">
-              {project.category}
-            </p>
-
-            <h3 className="font-heading text-ink mt-4 text-3xl tracking-tight">
-              {project.name}
-            </h3>
-            <p className="font-heading text-ink/70 mt-2 text-lg font-normal italic">
-              {project.heading}
-            </p>
-
-            <p className="text-muted mt-5 leading-relaxed">
-              {project.description}
-            </p>
-
-            <ul className="mt-7 grid gap-x-6 gap-y-2 sm:grid-cols-2">
-              {project.highlights.map((highlight) => (
-                <li
-                  key={highlight}
-                  className="text-ink flex items-start gap-2.5 text-sm"
+      {/*
+       * Alternating full-width rows rather than a grid of identical cards —
+       * it gives the screenshots room to read and breaks up the page's card
+       * rhythm without losing the familiar structure.
+       */}
+      <ul className="mt-16 space-y-6">
+        {projects.map((project, index) => (
+          <li key={project.id} data-reveal>
+            <article
+              className={`border-hairline bg-surface grid overflow-hidden border ${
+                project.image ? "lg:grid-cols-2" : ""
+              } ${project.image ? "card-interactive" : "card-static"}`}
+            >
+              {project.image ? (
+                <div
+                  className={`bg-canvas-alt relative aspect-[3/2] overflow-hidden lg:aspect-auto lg:min-h-full ${
+                    index % 2 === 1 ? "lg:order-2" : ""
+                  }`}
                 >
-                  <span
-                    aria-hidden="true"
-                    className="bg-accent mt-2 size-1 shrink-0 rounded-full"
+                  <Image
+                    src={project.image.src}
+                    alt={project.image.alt}
+                    width={project.image.width}
+                    height={project.image.height}
+                    /* Below the fold on every breakpoint. */
+                    loading="lazy"
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="size-full object-cover object-top"
                   />
-                  {highlight}
-                </li>
-              ))}
-            </ul>
+                </div>
+              ) : null}
 
-            <ul className="mt-8 flex flex-wrap gap-2">
-              {project.tags.map((tag) => (
-                <li
-                  key={tag}
-                  className="bg-peach text-ink rounded-full px-3 py-1.5 text-xs font-medium"
-                >
-                  {tag}
-                </li>
-              ))}
-            </ul>
+              <div className="flex flex-col p-8 md:p-10">
+                <p className="text-ink-muted text-xs font-semibold tracking-[0.16em] uppercase">
+                  {project.category}
+                </p>
 
-            <div className="mt-auto pt-8">
-              {project.links.length > 0 ? (
-                <ul className="flex flex-wrap gap-3">
-                  {project.links.map((link) => (
-                    <li key={link.href}>
-                      <ButtonLink
-                        href={link.href}
-                        tone={link.primary ? "ink" : "outline"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {link.label}
-                        <LuArrowUpRight className="size-4" aria-hidden="true" />
-                        <span className="sr-only">
-                          {" "}
-                          for {project.name} (opens in a new tab)
-                        </span>
-                      </ButtonLink>
+                <h3 className="font-heading text-ink mt-4 text-2xl tracking-tight md:text-3xl">
+                  {project.name}
+                </h3>
+                <p className="font-heading text-ink/70 mt-2 text-lg font-normal italic">
+                  {project.heading}
+                </p>
+
+                <p className="text-ink-muted mt-5 leading-relaxed">
+                  {project.description}
+                </p>
+
+                <ul className="mt-6 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+                  {project.highlights.map((highlight) => (
+                    <li
+                      key={highlight}
+                      className="text-ink flex items-start gap-2.5 text-sm"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="bg-action mt-2 size-1 shrink-0 rounded-full"
+                      />
+                      {highlight}
                     </li>
                   ))}
                 </ul>
-              ) : (
-                /*
-                 * Client work with nothing public to link to, so this stays a
-                 * plain note rather than a link to nowhere.
-                 */
-                <p className="text-muted border-ink/10 border-t pt-6 text-sm">
-                  Delivered as client work —{" "}
-                  <a
-                    href="#contact"
-                    className="text-ink decoration-accent hover:decoration-ink focus-visible:outline-accent rounded-sm font-medium underline decoration-2 underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4"
-                  >
-                    ask me for a walkthrough
-                  </a>
-                  .
-                </p>
-              )}
-            </div>
+
+                <ul className="mt-7 flex flex-wrap gap-2">
+                  {project.tags.map((tag) => (
+                    <li
+                      key={tag}
+                      className="border-hairline text-ink-muted rounded-full border px-3 py-1.5 text-xs font-medium"
+                    >
+                      {tag}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-auto pt-8">
+                  {project.links.length > 0 ? (
+                    <ul className="flex flex-wrap gap-3">
+                      {project.links.map((link) => (
+                        <li key={link.href}>
+                          <ButtonLink
+                            href={link.href}
+                            tone={link.primary ? "action" : "outline"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {link.label}
+                            <LuArrowUpRight
+                              className="size-4"
+                              aria-hidden="true"
+                            />
+                            <span className="sr-only">
+                              {" "}
+                              for {project.name} (opens in a new tab)
+                            </span>
+                          </ButtonLink>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    /*
+                     * Client work with nothing public to link to, so this stays
+                     * a plain note rather than a link to nowhere.
+                     */
+                    <p className="text-ink-muted border-hairline border-t pt-6 text-sm">
+                      Delivered as client work —{" "}
+                      <a
+                        href="#contact"
+                        className="text-ink hover:text-action decoration-action focus-visible:outline-action rounded-sm font-medium underline decoration-2 underline-offset-4 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4"
+                      >
+                        ask me for a walkthrough
+                      </a>
+                      .
+                    </p>
+                  )}
+                </div>
+              </div>
+            </article>
           </li>
         ))}
       </ul>

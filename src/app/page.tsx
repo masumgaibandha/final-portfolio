@@ -1,4 +1,4 @@
-import { About } from "@/components/sections/About";
+﻿import { About } from "@/components/sections/About";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
 import { Hero } from "@/components/sections/Hero";
@@ -15,7 +15,7 @@ export default function Home() {
     <>
       <a
         href="#main"
-        className="focus:bg-ink focus:text-bg sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-100 focus:rounded-full focus:px-5 focus:py-3 focus:text-sm focus:font-medium"
+        className="focus:bg-ink focus:text-on-dark sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-100 focus:rounded-full focus:px-5 focus:py-3 focus:text-sm focus:font-medium"
       >
         Skip to content
       </a>
@@ -23,12 +23,16 @@ export default function Home() {
       <Navbar />
 
       <main id="main">
+        {/*
+         * Development leads: Services â†’ Projects â†’ Testimonials establish the
+         * primary positioning before the outreach tooling appears.
+         */}
         <Hero />
         <About />
         <Services />
-        <OutreachStack />
         <Projects />
         <Testimonials />
+        <OutreachStack />
         <Pricing />
         <Contact />
       </main>

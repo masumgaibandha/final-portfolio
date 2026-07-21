@@ -6,53 +6,75 @@
  */
 @import "@heroui/react/styles";
 
-/* Brand tokens that have no HeroUI counterpart. */
 @theme {
-  --color-bg: #ffffff;
-  --color-cream: #fff9d9;
-  --color-warm: #ffeeb8;
-  --color-peach: #ffe3c4;
-  --color-ink: #020000;
-  --color-line: #e8e2d8;
+  /* Page + card surfaces */
+  --color-canvas: #fdfbf6;
+  --color-canvas-alt: #f5f1e8;
+  --color-surface: #ffffff;
+
+  /* Pale yellow. A highlight, never a background — see the note below. */
+  --color-accent: #f7efc9;
+  --color-accent-ink: #5c4a12;
+
+  /* Terracotta: primary CTAs, active nav, link hover, focus rings. */
+  --color-action: #b4462a;
+  --color-action-hover: #963a22;
+  /* Lightened for legibility on dark bands. */
+  --color-action-dark: #d4674a;
+
+  --color-ink: #1a1815;
+  --color-ink-muted: #57534e;
+  --color-hairline: #e7e1d4;
+
+  --color-on-dark: #f5f1e8;
+  --color-on-dark-muted: #a8a296;
 
   --font-heading: var(--font-playfair);
   --font-body: var(--font-poppins);
 
-  /* Editorial type scale — fluid, so it needs no breakpoint juggling. */
-  --text-display: clamp(2.25rem, 4.4vw, 4rem);
-  --text-section: clamp(2rem, 4vw, 3.5rem);
+  /*
+   * The hero must clearly outrank section headings: ~1.9x at desktop, so the
+   * page has one obvious entry point rather than competing display type.
+   *
+   * Named `--type-*` rather than `--text-*` on purpose. tailwind-merge cannot
+   * tell a custom `text-section` (a size) from a custom `text-ink` (a colour),
+   * so it treats them as one group and drops the first — which silently
+   * stripped every section heading's size when passed through `cn()`.
+   */
+  --type-display: clamp(2.5rem, 5.2vw, 4.75rem);
+  --type-section: clamp(1.75rem, 2.8vw, 2.5rem);
 }
 
 /*
  * HeroUI's own tokens, repointed at the palette above. Overriding these keeps
- * HeroUI components (buttons, fields, focus rings) on-brand and simultaneously
- * redefines `bg-surface`, `text-muted`, `text-accent`, `border-border`, etc.
+ * HeroUI components (buttons, fields, focus rings) on-brand.
  */
 @layer base {
   :root {
-    --background: #ffffff;
-    --foreground: #020000;
+    --background: #fdfbf6;
+    --foreground: #1a1815;
 
-    --surface: #f8f2e7;
-    --surface-foreground: #020000;
+    --surface: #ffffff;
+    --surface-foreground: #1a1815;
 
-    --muted: #625e5b;
+    --muted: #57534e;
 
-    --accent: #fc7e07;
-    --accent-foreground: #020000;
+    --accent: #f7efc9;
+    --accent-foreground: #5c4a12;
 
-    --border: #e8e2d8;
-    --separator: #e8e2d8;
-    --focus: #fc7e07;
-    --link: #020000;
+    --border: #e7e1d4;
+    --separator: #e7e1d4;
+    /* Terracotta, not the pale yellow accent — focus must be unmissable. */
+    --focus: #b4462a;
+    --link: #1a1815;
 
-    --default: #f8f2e7;
-    --default-foreground: #020000;
+    --default: #f5f1e8;
+    --default-foreground: #1a1815;
 
     --field-background: #ffffff;
-    --field-foreground: #020000;
+    --field-foreground: #1a1815;
     --field-placeholder: #8b8681;
-    --field-border: #e8e2d8;
+    --field-border: #e7e1d4;
     --field-border-width: 1px;
 
     --radius: 0.5rem;
@@ -63,7 +85,7 @@
   }
 
   body {
-    background-color: var(--color-bg);
+    background-color: var(--color-canvas);
     color: var(--color-ink);
     font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
     font-weight: 400;
@@ -85,8 +107,8 @@
   }
 
   ::selection {
-    background-color: var(--color-warm);
-    color: var(--color-ink);
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
   }
 }
 
@@ -97,8 +119,7 @@
    *
    * `scripting: enabled` is load-bearing, not decoration — without it, a failed
    * or disabled JS bundle would leave every revealed element stuck at opacity 0
-   * with no way back. Gating in CSS avoids that and costs no flash of hidden
-   * content, which a class toggled from JS would not.
+   * with no way back.
    */
   @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
     [data-reveal] {
@@ -116,26 +137,70 @@
   }
 }
 
-@utility text-display {
-  font-size: var(--text-display);
+@utility type-display {
+  font-size: var(--type-display);
   line-height: 0.98;
   letter-spacing: -0.03em;
 }
 
-@utility text-section {
-  font-size: var(--text-section);
-  line-height: 1.05;
+@utility type-section {
+  font-size: var(--type-section);
+  line-height: 1.1;
   letter-spacing: -0.02em;
+}
+
+/*
+ * Interactive card. Only for cards that genuinely navigate somewhere — applying
+ * it to a static card (a testimonial, say) promises a click that never happens.
+ */
+@utility card-interactive {
+  transition:
+    transform 220ms var(--ease-out-quad),
+    border-color 220ms var(--ease-out-quad),
+    box-shadow 220ms var(--ease-out-quad);
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--color-action) 35%, transparent);
+    box-shadow: 0 12px 28px -12px rgb(26 24 21 / 0.18);
+  }
+
+  /* Paired with `overflow-hidden` on the image wrapper. */
+  & img {
+    transition: transform 220ms var(--ease-out-quad);
+  }
+
+  &:hover img {
+    transform: scale(1.02);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: border-color 220ms linear;
+
+    &:hover,
+    &:hover img {
+      transform: none;
+    }
+  }
+}
+
+/* Static card: warms its border on hover without implying it is clickable. */
+@utility card-static {
+  transition: border-color 220ms var(--ease-out-quad);
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--color-action) 22%, transparent);
+  }
 }
 
 /* The one gradient the design allows: the warm wash behind the hero. */
 @utility hero-wash {
   background:
     radial-gradient(
-      120% 90% at 78% 8%,
-      var(--color-warm) 0%,
-      color-mix(in srgb, var(--color-peach) 70%, transparent) 42%,
-      transparent 72%
+      110% 85% at 82% 6%,
+      var(--color-accent) 0%,
+      color-mix(in srgb, var(--color-canvas-alt) 85%, transparent) 46%,
+      transparent 74%
     ),
-    radial-gradient(95% 75% at 8% 92%, var(--color-cream) 0%, transparent 68%);
+    radial-gradient(90% 70% at 6% 94%, var(--color-canvas-alt) 0%, transparent 66%);
 }
