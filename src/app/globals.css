@@ -1,0 +1,141 @@
+/*
+ * HeroUI v3 is CSS-first: it imports Tailwind itself and exposes its design
+ * tokens as plain custom properties, which its own `@theme inline` block maps
+ * to Tailwind utilities. So we retheme HeroUI by overriding those raw variables
+ * rather than by configuring a plugin.
+ */
+@import "@heroui/react/styles";
+
+/* Brand tokens that have no HeroUI counterpart. */
+@theme {
+  --color-bg: #ffffff;
+  --color-cream: #fff9d9;
+  --color-warm: #ffeeb8;
+  --color-peach: #ffe3c4;
+  --color-ink: #020000;
+  --color-line: #e8e2d8;
+
+  --font-heading: var(--font-playfair);
+  --font-body: var(--font-poppins);
+
+  /* Editorial type scale — fluid, so it needs no breakpoint juggling. */
+  --text-display: clamp(2.25rem, 4.4vw, 4rem);
+  --text-section: clamp(2rem, 4vw, 3.5rem);
+}
+
+/*
+ * HeroUI's own tokens, repointed at the palette above. Overriding these keeps
+ * HeroUI components (buttons, fields, focus rings) on-brand and simultaneously
+ * redefines `bg-surface`, `text-muted`, `text-accent`, `border-border`, etc.
+ */
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #020000;
+
+    --surface: #f8f2e7;
+    --surface-foreground: #020000;
+
+    --muted: #625e5b;
+
+    --accent: #fc7e07;
+    --accent-foreground: #020000;
+
+    --border: #e8e2d8;
+    --separator: #e8e2d8;
+    --focus: #fc7e07;
+    --link: #020000;
+
+    --default: #f8f2e7;
+    --default-foreground: #020000;
+
+    --field-background: #ffffff;
+    --field-foreground: #020000;
+    --field-placeholder: #8b8681;
+    --field-border: #e8e2d8;
+    --field-border-width: 1px;
+
+    --radius: 0.5rem;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading), ui-serif, Georgia, serif;
+    font-weight: 700;
+  }
+
+  /* Section anchors clear the sticky header. */
+  [id] {
+    scroll-margin-top: 6rem;
+  }
+
+  ::selection {
+    background-color: var(--color-warm);
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  /*
+   * Entry animation. Elements opt in with `data-reveal`; an IntersectionObserver
+   * flips `data-revealed` on.
+   *
+   * `scripting: enabled` is load-bearing, not decoration — without it, a failed
+   * or disabled JS bundle would leave every revealed element stuck at opacity 0
+   * with no way back. Gating in CSS avoids that and costs no flash of hidden
+   * content, which a class toggled from JS would not.
+   */
+  @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(12px);
+      transition:
+        opacity 600ms var(--ease-out-quad),
+        transform 600ms var(--ease-out-quad);
+    }
+
+    [data-reveal][data-revealed="true"] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@utility text-display {
+  font-size: var(--text-display);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+
+@utility text-section {
+  font-size: var(--text-section);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+/* The one gradient the design allows: the warm wash behind the hero. */
+@utility hero-wash {
+  background:
+    radial-gradient(
+      120% 90% at 78% 8%,
+      var(--color-warm) 0%,
+      color-mix(in srgb, var(--color-peach) 70%, transparent) 42%,
+      transparent 72%
+    ),
+    radial-gradient(95% 75% at 8% 92%, var(--color-cream) 0%, transparent 68%);
+}
