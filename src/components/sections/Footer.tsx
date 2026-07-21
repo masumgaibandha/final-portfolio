@@ -3,13 +3,9 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/ui/Logo";
 import { footer } from "@/data/contact";
-import { navLinks, site, socialLinks } from "@/data/site";
+import { footerLinks, site, socialLinks } from "@/data/site";
 
-const quickLinks = [
-  ...navLinks.filter((link) => link.href !== "/#home"),
-  { label: "Resources", href: "/resources" },
-  { label: "Résumé", href: site.resumeUrl },
-];
+const quickLinks = [...footerLinks, { label: "Résumé", href: site.resumeUrl }];
 
 const linkClass =
   "text-on-dark/75 hover:text-on-dark focus-visible:outline-action rounded-sm text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-4";

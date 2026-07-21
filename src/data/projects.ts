@@ -33,6 +33,8 @@ export const projects: readonly Project[] = [
       width: 1154,
       height: 852,
       alt: "The DentFlow landing page in a browser window, headlined “Run your clinic with clarity. Care for patients with confidence.”, with navigation for Dashboard, Services and Manage Services.",
+      /* Logo and headline start ~3% from the left; a centre crop clips them. */
+      objectPosition: "object-left",
     },
   },
   {
@@ -64,6 +66,8 @@ export const projects: readonly Project[] = [
       width: 1168,
       height: 815,
       alt: "The SkillPath AI app, headlined “Find the right course, fast”, above a “How it works” row of search, enrol, study-plan and chat steps.",
+      /* Headline occupies the left 48%; anchoring left keeps it whole. */
+      objectPosition: "object-left",
     },
   },
   {
@@ -103,6 +107,12 @@ export const projects: readonly Project[] = [
       width: 876,
       height: 1024,
       alt: "The TaskForge marketplace app showing featured freelance tasks with budgets, and a Top Freelancers list.",
+      /*
+       * Anchored right: the source still carries a sliver of marketing copy on
+       * its left, and a centre crop left that text half-cut. Right keeps the
+       * app UI — task cards and freelancer list — and drops the sliver.
+       */
+      objectPosition: "object-right",
     },
   },
   {
@@ -123,10 +133,18 @@ export const projects: readonly Project[] = [
     tags: ["Cold Email", "Deliverability", "Lead Generation", "Automation"],
     /* Client engagements, so there is nothing public to link to. */
     links: [],
-    /*
-     * No `image`: this is a delivery process across client accounts, not a
-     * product with a UI, and no genuine screenshot of it exists in resources/.
-     * The card renders a typographic panel instead of a fabricated one.
-     */
+    image: {
+      src: "/projects/b2b-outreach-system.webp",
+      width: 1100,
+      height: 534,
+      alt: "An Instantly.ai campaign dashboard reporting 5.6K emails sent, an 83.9% open rate, a 2.7% reply rate and 25 opportunities, above a daily sends-and-opens chart.",
+      /*
+       * At 2.06:1 this is far wider than the side panels, so Projects gives it
+       * a full-width banner whose ratio matches the source — no crop at all,
+       * which matters because the metrics sit at both far edges and a cover
+       * crop in a square panel would discard more than half of them.
+       */
+      objectPosition: "object-center",
+    },
   },
 ];

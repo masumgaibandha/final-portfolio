@@ -33,6 +33,13 @@ export interface ProjectImage {
   width: number;
   height: number;
   alt: string;
+  /**
+   * Tailwind `object-*` class picking which part survives the cover crop.
+   * Must be a literal class so Tailwind's scanner emits it. Chosen per image
+   * from where its important UI actually sits — a centre crop clips the
+   * DentFlow and SkillPath headlines, which start near the left edge.
+   */
+  objectPosition: string;
 }
 
 export interface Project {
@@ -95,4 +102,13 @@ export interface AffiliateTool {
 export interface SocialLink {
   label: string;
   href: string;
+}
+
+export interface BlogPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  /** ISO date, used for both display and the `datetime` attribute. */
+  publishedAt: string;
+  readingMinutes: number;
 }

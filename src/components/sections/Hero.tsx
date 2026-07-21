@@ -14,7 +14,11 @@ export function Hero() {
         className="hero-wash pointer-events-none absolute inset-0 -z-10"
       />
 
-      <Container className="pt-12 pb-24 md:pt-16 md:pb-32">
+      {/*
+       * Vertical rhythm tightened at lg so both CTAs sit above a 1366x768
+       * fold; mobile keeps its original breathing room.
+       */}
+      <Container className="pt-12 pb-24 md:pt-14 md:pb-28 lg:pt-10 lg:pb-24">
         {/*
          * Deliberately no `data-reveal` on the hero: it starts at opacity 0
          * until hydration runs the observer, which made the hero copy the LCP
@@ -29,7 +33,7 @@ export function Hero() {
 
             <h1
               id="hero-heading"
-              className="type-display text-ink mt-6 text-balance"
+              className="type-display text-ink mt-5 text-balance"
             >
               {hero.headline}
               <span className="font-heading block font-normal italic">
@@ -37,12 +41,13 @@ export function Hero() {
               </span>
             </h1>
 
-            <p className="text-ink-muted mt-8 max-w-prose text-base leading-relaxed md:text-lg">
+            {/* Body stays at 16/17px — readable, not shrunk to buy space. */}
+            <p className="text-ink-muted mt-6 max-w-prose text-base leading-relaxed lg:text-[1.0625rem]">
               {hero.description}
             </p>
 
             {/* Two actions only — the résumé now lives in About, below the summary. */}
-            <div className="mt-10 flex flex-wrap items-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center gap-3">
               <ButtonLink href="#projects" tone="action" size="lg">
                 View My Projects
                 <LuArrowDown className="size-4" aria-hidden="true" />

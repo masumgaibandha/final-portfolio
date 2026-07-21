@@ -17,16 +17,32 @@ export const site = {
 
 /*
  * Root-relative (`/#about`, not `#about`) so these resolve correctly from
- * /resources as well as the homepage. On the homepage Next still treats them as
- * in-page scrolls.
+ * /resources and /blog as well as the homepage. On the homepage Next still
+ * treats them as in-page scrolls.
+ */
+
+/*
+ * Primary navigation, deliberately short. Home lives on the logo, Contact on
+ * the "Let's Talk" button, and Testimonials and Pricing are found by scrolling
+ * — all four still exist as sections, they are just not competing for space in
+ * the header.
  */
 export const navLinks: readonly NavLink[] = [
-  { label: "Home", href: "/#home" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Services", href: "/#services" },
+  { label: "About", href: "/#about" },
+  { label: "Blog", href: "/blog" },
+];
+
+/* The footer carries the full map, including what the header drops. */
+export const footerLinks: readonly NavLink[] = [
   { label: "About", href: "/#about" },
   { label: "Services", href: "/#services" },
   { label: "Projects", href: "/#projects" },
   { label: "Testimonials", href: "/#testimonials" },
   { label: "Pricing", href: "/#pricing" },
+  { label: "Blog", href: "/blog" },
+  { label: "Resources", href: "/resources" },
   { label: "Contact", href: "/#contact" },
 ];
 

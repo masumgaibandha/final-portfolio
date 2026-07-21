@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { LuArrowUpRight } from "react-icons/lu";
+import { cn } from "tailwind-variants";
 
 import { ButtonLink } from "@/components/ui/Button";
 import { Section } from "@/components/ui/Section";
@@ -23,132 +24,166 @@ export function Projects() {
        * rhythm without losing the familiar structure.
        */}
       <ul className="mt-16 space-y-6">
-        {projects.map((project, index) => (
-          <li key={project.id} data-reveal>
-            <article
-              className={`border-hairline bg-surface grid overflow-hidden border ${
-                project.image ? "lg:grid-cols-2" : ""
-              } ${project.image ? "card-interactive" : "card-static"}`}
-            >
-              {/*
-               * `object-contain` on a neutral panel, never `object-cover`: the
-               * three sources have different native ratios (4:3, 4:3 and 5:6),
-               * so any single crop box would slice one of them — it was cutting
-               * the left edge off the DentFlow browser frame. Contain letterboxes
-               * instead, so every screenshot is whole and undistorted. The
-               * padding keeps the frame edges off the card border.
-               *
-               * First in DOM order, so mobile stacks the image above the copy;
-               * `lg:order-2` only alternates sides once there are two columns.
-               */}
-              {project.image ? (
-                <div
-                  className={`bg-canvas-alt border-hairline relative aspect-[4/3] p-5 lg:aspect-auto lg:h-full lg:p-7 ${
-                    index % 2 === 1
-                      ? "lg:order-2 lg:border-l lg:border-b-0"
-                      : "lg:border-r lg:border-b-0"
-                  } border-b`}
-                >
-                  <Image
-                    src={project.image.src}
-                    alt={project.image.alt}
-                    width={project.image.width}
-                    height={project.image.height}
-                    /* Below the fold at every breakpoint. */
-                    loading="lazy"
-                    sizes="(min-width: 1024px) 50vw, 100vw"
-                    className="size-full object-contain object-center"
-                  />
-                </div>
-              ) : null}
+        {projects.map((project, index) => {
+          /*
+           * Anything wider than ~1.8:1 gets a full-width banner instead of a
+           * side panel. The B2B dashboard is 2.06:1, and forcing that into a
+           * roughly square side panel would crop away more than half its width
+           * — including the metrics at both far edges. The banner takes the
+           * source's own ratio, so `object-cover` covers it with zero crop.
+           */
+          const isWide = project.image
+            ? project.image.width / project.image.height > 1.8
+            : false;
 
-              <div className="flex flex-col p-8 md:p-10">
-                <p className="text-ink-muted text-xs font-semibold tracking-[0.16em] uppercase">
-                  {project.category}
-                </p>
+          return (
+            <li key={project.id} data-reveal>
+              <article
+                className={cn(
+                  "border-hairline bg-surface grid overflow-hidden border",
+                  project.image ? "card-interactive" : "card-static",
+                  project.image && !isWide && "lg:grid-cols-2",
+                )}
+              >
+                {/*
+                 * Full-bleed: no padding, `object-cover`, so the panel is
+                 * completely covered with no letterboxing. Each image carries
+                 * its own `objectPosition` because a single crop anchor cannot
+                 * suit all four — see the notes in src/data/projects.ts.
+                 *
+                 * First in DOM order, so mobile stacks the image above the
+                 * copy; `lg:order-2` only alternates sides once there are two
+                 * columns.
+                 */}
+                {project.image ? (
+                  <div
+                    className={cn(
+                      "bg-canvas-alt border-hairline relative overflow-hidden border-b",
+                      isWide
+                        ? "w-full"
+                        : cn(
+                            "aspect-[4/3] lg:aspect-auto lg:h-full lg:border-b-0",
+                            index % 2 === 1
+                              ? "lg:order-2 lg:border-l"
+                              : "lg:border-r",
+                          ),
+                    )}
+                    style={
+                      isWide
+                        ? {
+                            aspectRatio: `${project.image.width} / ${project.image.height}`,
+                          }
+                        : undefined
+                    }
+                  >
+                    <Image
+                      src={project.image.src}
+                      alt={project.image.alt}
+                      width={project.image.width}
+                      height={project.image.height}
+                      /* Below the fold at every breakpoint. */
+                      loading="lazy"
+                      sizes={
+                        isWide
+                          ? "(min-width: 1280px) 1200px, 100vw"
+                          : "(min-width: 1024px) 50vw, 100vw"
+                      }
+                      className={cn(
+                        "size-full object-cover",
+                        project.image.objectPosition,
+                      )}
+                    />
+                  </div>
+                ) : null}
 
-                <h3 className="font-heading text-ink mt-4 text-2xl tracking-tight md:text-3xl">
-                  {project.name}
-                </h3>
-                <p className="font-heading text-ink/70 mt-2 text-lg font-normal italic">
-                  {project.heading}
-                </p>
+                <div className="flex flex-col p-8 md:p-10">
+                  <p className="text-ink-muted text-xs font-semibold tracking-[0.16em] uppercase">
+                    {project.category}
+                  </p>
 
-                <p className="text-ink-muted mt-5 leading-relaxed">
-                  {project.description}
-                </p>
+                  <h3 className="font-heading text-ink mt-4 text-2xl tracking-tight md:text-3xl">
+                    {project.name}
+                  </h3>
+                  <p className="font-heading text-ink/70 mt-2 text-lg font-normal italic">
+                    {project.heading}
+                  </p>
 
-                <ul className="mt-6 grid gap-x-6 gap-y-2 sm:grid-cols-2">
-                  {project.highlights.map((highlight) => (
-                    <li
-                      key={highlight}
-                      className="text-ink flex items-start gap-2.5 text-sm"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="bg-action mt-2 size-1 shrink-0 rounded-full"
-                      />
-                      {highlight}
-                    </li>
-                  ))}
-                </ul>
+                  <p className="text-ink-muted mt-5 leading-relaxed">
+                    {project.description}
+                  </p>
 
-                <ul className="mt-7 flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <li
-                      key={tag}
-                      className="border-hairline text-ink-muted rounded-full border px-3 py-1.5 text-xs font-medium"
-                    >
-                      {tag}
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-auto pt-8">
-                  {project.links.length > 0 ? (
-                    <ul className="flex flex-wrap gap-3">
-                      {project.links.map((link) => (
-                        <li key={link.href}>
-                          <ButtonLink
-                            href={link.href}
-                            tone={link.primary ? "action" : "outline"}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {link.label}
-                            <LuArrowUpRight
-                              className="size-4"
-                              aria-hidden="true"
-                            />
-                            <span className="sr-only">
-                              {" "}
-                              for {project.name} (opens in a new tab)
-                            </span>
-                          </ButtonLink>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    /*
-                     * Client work with nothing public to link to, so this stays
-                     * a plain note rather than a link to nowhere.
-                     */
-                    <p className="text-ink-muted border-hairline border-t pt-6 text-sm">
-                      Delivered as client work —{" "}
-                      <a
-                        href="#contact"
-                        className="text-ink hover:text-action decoration-action focus-visible:outline-action rounded-sm font-medium underline decoration-2 underline-offset-4 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4"
+                  <ul className="mt-6 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+                    {project.highlights.map((highlight) => (
+                      <li
+                        key={highlight}
+                        className="text-ink flex items-start gap-2.5 text-sm"
                       >
-                        ask me for a walkthrough
-                      </a>
-                      .
-                    </p>
-                  )}
+                        <span
+                          aria-hidden="true"
+                          className="bg-action mt-2 size-1 shrink-0 rounded-full"
+                        />
+                        {highlight}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <ul className="mt-7 flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <li
+                        key={tag}
+                        className="border-hairline text-ink-muted rounded-full border px-3 py-1.5 text-xs font-medium"
+                      >
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-auto pt-8">
+                    {project.links.length > 0 ? (
+                      <ul className="flex flex-wrap gap-3">
+                        {project.links.map((link) => (
+                          <li key={link.href}>
+                            <ButtonLink
+                              href={link.href}
+                              tone={link.primary ? "action" : "outline"}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {link.label}
+                              <LuArrowUpRight
+                                className="size-4"
+                                aria-hidden="true"
+                              />
+                              <span className="sr-only">
+                                {" "}
+                                for {project.name} (opens in a new tab)
+                              </span>
+                            </ButtonLink>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      /*
+                       * Client work with nothing public to link to, so this stays
+                       * a plain note rather than a link to nowhere.
+                       */
+                      <p className="text-ink-muted border-hairline border-t pt-6 text-sm">
+                        Delivered as client work —{" "}
+                        <a
+                          href="#contact"
+                          className="text-ink hover:text-action decoration-action focus-visible:outline-action rounded-sm font-medium underline decoration-2 underline-offset-4 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4"
+                        >
+                          ask me for a walkthrough
+                        </a>
+                        .
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </article>
-          </li>
-        ))}
+              </article>
+            </li>
+          );
+        })}
       </ul>
     </Section>
   );
