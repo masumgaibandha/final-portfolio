@@ -3,16 +3,19 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LuMenu, LuX } from "react-icons/lu";
+import { cn } from "tailwind-variants";
 
 import { buttonClass } from "@/components/ui/Button";
+import { useNavState } from "@/components/ui/useNavState";
 import { navLinks } from "@/data/site";
 
 /**
- * The only interactive part of the header, kept as a leaf client component so
- * the rest of the navbar stays server-rendered.
+ * The mobile menu. Shares `useNavState` with the desktop list so both mark the
+ * same link active from the same observer logic.
  */
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
+  const { isActive, ariaCurrent, isContactInView } = useNavState();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -62,9 +65,22 @@ export function MobileNav() {
                   <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="font-heading text-ink focus-visible:outline-action block py-5 text-2xl focus-visible:outline-2 focus-visible:-outline-offset-2"
+                    aria-current={ariaCurrent(link.href)}
+                    className={cn(
+                      "font-heading focus-visible:outline-action block py-5 text-2xl focus-visible:outline-2 focus-visible:-outline-offset-2",
+                      isActive(link.href) ? "text-action" : "text-ink",
+                    )}
                   >
-                    {link.label}
+                    <span
+                      className={cn(
+                        /* Same hairline rule as desktop, sized to the label. */
+                        "relative inline-block",
+                        isActive(link.href) &&
+                          "after:bg-action after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full",
+                      )}
+                    >
+                      {link.label}
+                    </span>
                   </Link>
                 </li>
               ))}
@@ -72,6 +88,7 @@ export function MobileNav() {
             <Link
               href="/#contact"
               onClick={() => setIsOpen(false)}
+              aria-current={isContactInView ? "location" : undefined}
               className={buttonClass({
                 tone: "ink",
                 size: "lg",

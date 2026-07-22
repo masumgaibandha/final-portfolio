@@ -17,8 +17,12 @@ export function Pricing() {
         align="between"
       />
 
-      {/* Cards stretch to a common height so the CTAs line up across tiers. */}
-      <ul className="mt-16 grid gap-6 lg:grid-cols-3">
+      {/*
+       * `items-stretch` (the grid default) plus `h-full` on each card gives the
+       * three tiers a common height without a fixed one, so mobile still sizes
+       * to content and cannot overflow.
+       */}
+      <ul className="mt-16 grid items-stretch gap-6 lg:grid-cols-3">
         {pricingTiers.map((tier) => (
           <li
             key={tier.id}
@@ -30,8 +34,14 @@ export function Pricing() {
             )}
             data-reveal
           >
-            {/* Fixed height so a two-line tier name doesn't shunt its price out of line. */}
-            <div className="flex items-start justify-between gap-4 lg:min-h-[3.9rem]">
+            {/*
+             * Reserved heights on the title and description, applied only from
+             * `lg` where the three columns sit side by side. Without them a
+             * two-line tier name pushes that card's price, features and CTA out
+             * of line with its neighbours. On mobile the cards stack, so the
+             * reservations are dropped rather than leaving dead space.
+             */}
+            <div className="flex items-start justify-between gap-4 lg:min-h-[3.75rem]">
               <h3
                 className={cn(
                   "font-heading text-2xl tracking-tight",
@@ -40,7 +50,11 @@ export function Pricing() {
               >
                 {tier.name}
               </h3>
-              {/* Pale yellow earns its keep here: ink-on-terracotta is only ~2.8:1. */}
+              {/*
+               * Pale yellow earns its keep here: ink-on-terracotta is only
+               * ~2.8:1. `items-start` keeps the badge out of the title's flow,
+               * so its presence cannot shift anything below.
+               */}
               {tier.badge ? (
                 <span className="bg-accent text-accent-ink rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap">
                   {tier.badge}
@@ -59,14 +73,15 @@ export function Pricing() {
 
             <p
               className={cn(
-                "mt-4 text-sm leading-relaxed",
+                "mt-4 text-sm leading-relaxed lg:min-h-[4.3rem]",
                 tier.featured ? "text-on-dark-muted" : "text-ink-muted",
               )}
             >
               {tier.description}
             </p>
 
-            <ul className="mt-8 space-y-3">
+            {/* `flex-1` lets the feature list absorb the slack between cards. */}
+            <ul className="mt-8 flex-1 space-y-3">
               {tier.includes.map((item) => (
                 <li key={item} className="flex items-start gap-3 text-sm">
                   <LuCheck
@@ -80,30 +95,43 @@ export function Pricing() {
               ))}
             </ul>
 
-            <div
-              className={cn(
-                "mt-auto border-t pt-6",
-                tier.featured ? "border-on-dark/15 mt-8" : "border-hairline mt-8",
-              )}
-            >
-              <p
+            {/*
+             * `mt-auto` sits on its own element. Merged into the same class
+             * string as `mt-8`, tailwind-merge treated them as one margin
+             * utility and kept `mt-8` — which silently disabled the push and
+             * left the dividers and CTAs unaligned across the three cards.
+             */}
+            <div className="mt-auto">
+              <div
                 className={cn(
-                  "text-sm",
-                  tier.featured ? "text-on-dark-muted" : "text-ink-muted",
+                  "border-t pt-6",
+                  tier.featured ? "border-on-dark/15" : "border-hairline",
                 )}
               >
-                <span className="font-medium">Estimated timeline:</span>{" "}
-                {tier.timeline}
-              </p>
-              <ButtonLink
-                href="#contact"
-                tone={tier.featured ? "onDark" : "outline"}
-                fullWidth
-                className="mt-6"
-              >
-                {tier.ctaLabel}
-                <LuArrowRight className="size-4" aria-hidden="true" />
-              </ButtonLink>
+                {/*
+                 * Two lines reserved from `lg`: at 1024 "7–10 business days"
+                 * wraps while "2–4 weeks" does not, which pushed that card's
+                 * divider 20px out of line with its neighbours.
+                 */}
+                <p
+                  className={cn(
+                    "text-sm lg:min-h-[2.5rem]",
+                    tier.featured ? "text-on-dark-muted" : "text-ink-muted",
+                  )}
+                >
+                  <span className="font-medium">Estimated timeline:</span>{" "}
+                  {tier.timeline}
+                </p>
+                <ButtonLink
+                  href="#contact"
+                  tone={tier.featured ? "onDark" : "outline"}
+                  fullWidth
+                  className="mt-6"
+                >
+                  {tier.ctaLabel}
+                  <LuArrowRight className="size-4" aria-hidden="true" />
+                </ButtonLink>
+              </div>
             </div>
           </li>
         ))}

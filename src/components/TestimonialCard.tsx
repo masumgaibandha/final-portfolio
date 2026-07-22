@@ -76,12 +76,40 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
               </span>
             </Button>
 
-            <Modal.Backdrop className="bg-ink/50 fixed inset-0 z-100 flex items-center justify-center p-4">
+            {/*
+             * Only the dialog carries a surface. HeroUI's `.modal__container`
+             * is `h-(--visual-viewport-height)`, so putting a background on it
+             * painted a full-height white column down the middle of the
+             * screen — the container is strictly a positioning wrapper and is
+             * reset to `h-auto` with no background of its own.
+             */}
+            {/*
+             * The backdrop measures ~15px narrower than `innerWidth` while open.
+             * That is react-aria reserving the scrollbar gutter
+             * (`scrollbar-gutter: stable` on <html>) so the page cannot shift
+             * when the dialog opens — the card is centred on the content area,
+             * which is where the reader's eye already is. Not a bug; don't
+             * "fix" it by forcing the backdrop wider.
+             */}
+            <Modal.Backdrop
+              isDismissable
+              className="bg-ink/60 fixed inset-0 z-100 flex items-center justify-center"
+            >
+              {/* Positioning only: no size, no height, no background. */}
               <Modal.Container
-                size="md"
-                className="border-hairline bg-surface w-full max-w-xl border shadow-xl"
+                placement="center"
+                className="pointer-events-none h-auto w-auto max-w-none p-0 sm:w-auto sm:p-0"
               >
-                <Modal.Dialog aria-labelledby={headingId} className="p-7 md:p-9">
+                <Modal.Dialog
+                  aria-labelledby={headingId}
+                  /*
+                   * `max-w-none` defeats HeroUI's default `size` cap, which
+                   * otherwise pins the card at max-w-md (448px). Height follows
+                   * content and only scrolls when a long review would outgrow
+                   * the viewport; `svh` so mobile browser chrome can't clip it.
+                   */
+                  className="border-hairline bg-surface pointer-events-auto max-h-[calc(100svh-2rem)] w-[min(92vw,32rem)] max-w-none overflow-y-auto border p-7 shadow-xl md:p-9"
+                >
                   <Modal.Header className="flex items-start justify-between gap-6">
                     <div>
                       <p className="text-ink-muted text-xs font-semibold tracking-[0.16em] uppercase">

@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 import { MobileNav } from "@/components/sections/MobileNav";
-import { ButtonLink } from "@/components/ui/Button";
+import { NavLinks } from "@/components/sections/NavLinks";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/ui/Logo";
-import { navLinks, site } from "@/data/site";
+import { site } from "@/data/site";
 
 export function Navbar() {
   // Solid, not translucent — the style guide rules out frosted panels.
@@ -19,25 +19,8 @@ export function Navbar() {
           <Logo className="text-xl" />
         </Link>
 
-        <nav aria-label="Primary" className="hidden lg:block">
-          <ul className="flex items-center gap-8">
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="text-ink-muted hover:text-ink focus-visible:outline-action rounded-sm text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <div className="flex items-center gap-2">
-          <ButtonLink href="/#contact" tone="ink" className="hidden sm:inline-flex">
-            Let’s Talk
-          </ButtonLink>
+        <div className="flex items-center gap-2 lg:flex-1 lg:justify-end lg:gap-8">
+          <NavLinks />
           <MobileNav />
         </div>
       </Container>
