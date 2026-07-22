@@ -34,13 +34,15 @@ export const navLinks: readonly NavLink[] = [
   { label: "Blog", href: "/blog" },
 ];
 
-/* The footer carries the full map, including what the header drops. */
+/*
+ * Footer navigation. Deliberately the six destinations worth a direct link —
+ * Testimonials and Pricing are found by scrolling, and the résumé sits in the
+ * About section, so none of them need a second entry point down here.
+ */
 export const footerLinks: readonly NavLink[] = [
-  { label: "About", href: "/#about" },
-  { label: "Services", href: "/#services" },
   { label: "Projects", href: "/#projects" },
-  { label: "Testimonials", href: "/#testimonials" },
-  { label: "Pricing", href: "/#pricing" },
+  { label: "Services", href: "/#services" },
+  { label: "About", href: "/#about" },
   { label: "Blog", href: "/blog" },
   { label: "Resources", href: "/resources" },
   { label: "Contact", href: "/#contact" },
