@@ -41,12 +41,48 @@ const frontmatterSchema = z
     draft: z.boolean().default(false),
   })
   /*
-   * A cover with no alt text is an accessibility bug that is easy to miss once
-   * published, so it is caught at build time instead.
+   * Cover rules, enforced at build time rather than left to review:
+   *
+   * - Every *published* article needs both a cover and its alt text. A post
+   *   without one has no card art and no social preview image, and there is no
+   *   fallback artwork by design — inventing a placeholder would misrepresent
+   *   the piece.
+   * - A draft may omit them, so a post can be written before its art exists.
+   * - Any post carrying a cover needs alt text regardless of draft status: a
+   *   missing description is an accessibility bug that is easy to miss once it
+   *   goes out.
+   *
+   * `superRefine` rather than chained `.refine`s so a post missing both fields
+   * reports both at once instead of one per build.
    */
-  .refine((data) => !data.coverImage || Boolean(data.coverAlt), {
-    message: "coverAlt is required whenever coverImage is set",
-    path: ["coverAlt"],
+  .superRefine((data, ctx) => {
+    if (!data.draft) {
+      if (!data.coverImage) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["coverImage"],
+          message:
+            "coverImage is required for published articles. Add the image to public/blog/<slug>/ and reference it as /blog/<slug>/cover.webp, or set draft: true while you finish the post.",
+        });
+      }
+      if (!data.coverAlt) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["coverAlt"],
+          message:
+            "coverAlt is required for published articles. Describe what the image shows — it is read aloud by screen readers and shown when the image fails to load.",
+        });
+      }
+      return;
+    }
+
+    if (data.coverImage && !data.coverAlt) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["coverAlt"],
+        message: "coverAlt is required whenever coverImage is set.",
+      });
+    }
   });
 
 /** ~200 wpm, rounded up, floored at 1 so nothing reads "0 min". */

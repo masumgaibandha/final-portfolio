@@ -3,6 +3,10 @@ title: "Example article — copy this file to start a new post"
 description: "A template showing every supported frontmatter field and how the MDX body is styled. Kept as a draft so it never publishes."
 publishedAt: "2026-07-22"
 updatedAt: "2026-07-22"
+# Both are required before this can become `draft: false`. Add the image to
+# public/blog/<slug>/ first, then uncomment and point these at it.
+# coverImage: "/blog/example-article/cover.webp"
+# coverAlt: "Describe what the image actually shows"
 tags:
   - Next.js
   - Web Development
@@ -21,20 +25,31 @@ Set `draft: false` when it is ready. Drafts are visible while running
 `npm run dev` and excluded from `npm run build`, so you can preview a post
 before anyone else can reach it.
 
-## Adding images
+## Every published article needs a cover
+
+A post cannot go out with `draft: false` unless it has **both** of these. The
+build fails naming the file and the missing fields, and there is no fallback
+artwork — the cover is the card image on `/blog` and the article's social
+preview, so a generated placeholder would misrepresent the piece.
+
+```yaml
+coverImage: "/blog/your-slug/cover.webp"
+coverAlt: "Describe what the image actually shows"
+```
+
+Write `coverAlt` as a real description; it is read aloud by screen readers and
+shown if the image fails to load. Covers render in a 16:9 media area with
+`object-cover`, so around 1200×675 works well.
+
+A draft may omit both, which is why this template has them commented out. If a
+draft does carry a `coverImage`, it still needs `coverAlt`.
+
+## Adding other images
 
 Put them in `public/blog/your-slug/`, then reference them from the web root:
 
 ```mdx
 ![A short, meaningful description of the image](/blog/your-slug/diagram.webp)
-```
-
-To give a post a cover, add both fields to the frontmatter — `coverAlt` is
-required whenever `coverImage` is set, and the build fails without it:
-
-```yaml
-coverImage: "/blog/your-slug/cover.webp"
-coverAlt: "Meaningful image description"
 ```
 
 ## Formatting

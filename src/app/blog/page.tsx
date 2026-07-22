@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { LuArrowRight, LuPenLine } from "react-icons/lu";
 
@@ -68,36 +69,60 @@ export default function BlogPage() {
             Posts
           </h2>
 
+          {/* `auto-rows-fr` keeps cards level when descriptions differ in length. */}
           {blogPosts.length > 0 ? (
-            <ul className="grid gap-6 md:grid-cols-2">
+            <ul className="grid auto-rows-fr gap-6 md:grid-cols-2">
               {blogPosts.map((post) => (
                 <li key={post.slug} data-reveal>
-                  <article className="border-hairline bg-surface card-interactive flex h-full flex-col border p-8">
-                    <p className="text-ink-muted text-xs font-semibold tracking-[0.16em] uppercase">
-                      {/* Shared formatter: fixed locale + UTC, so the server and
-                          client can't disagree and trigger a hydration error. */}
-                      <time dateTime={post.publishedAt}>
-                        {formatPostDate(post.publishedAt)}
-                      </time>
-                      {" · "}
-                      {post.readingMinutes} min read
-                      {post.draft ? (
-                        <span className="bg-accent text-accent-ink ml-2 rounded-full px-2 py-0.5 text-[0.65rem] tracking-normal normal-case">
-                          Draft
-                        </span>
-                      ) : null}
-                    </p>
-                    <h3 className="font-heading text-ink mt-4 text-2xl tracking-tight">
-                      <Link
-                        href={`/blog/${post.slug}`}
-                        className="hover:text-action focus-visible:outline-action rounded-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
-                      >
-                        {post.title}
-                      </Link>
-                    </h3>
-                    <p className="text-ink-muted mt-4 leading-relaxed">
-                      {post.description}
-                    </p>
+                  <article className="border-hairline bg-surface card-interactive flex h-full flex-col overflow-hidden border">
+                    {/*
+                     * Rendered only when the post actually has a cover — a
+                     * placeholder would be invented art. `fill` because cover
+                     * dimensions aren't known ahead of time; the 16:9 parent
+                     * fixes the ratio and `object-cover` fills it without
+                     * distortion.
+                     */}
+                    {post.coverImage ? (
+                      <div className="bg-canvas-alt border-hairline relative aspect-video w-full overflow-hidden border-b">
+                        <Image
+                          src={post.coverImage}
+                          alt={post.coverAlt ?? ""}
+                          fill
+                          /* Cards sit below the header on every breakpoint. */
+                          loading="lazy"
+                          sizes="(min-width: 1152px) 564px, (min-width: 768px) 50vw, 100vw"
+                          className="object-cover object-center"
+                        />
+                      </div>
+                    ) : null}
+
+                    <div className="flex flex-1 flex-col p-8">
+                      <p className="text-ink-muted text-xs font-semibold tracking-[0.16em] uppercase">
+                        {/* Shared formatter: fixed locale + UTC, so the server and
+                            client can't disagree and trigger a hydration error. */}
+                        <time dateTime={post.publishedAt}>
+                          {formatPostDate(post.publishedAt)}
+                        </time>
+                        {" · "}
+                        {post.readingMinutes} min read
+                        {post.draft ? (
+                          <span className="bg-accent text-accent-ink ml-2 rounded-full px-2 py-0.5 text-[0.65rem] tracking-normal normal-case">
+                            Draft
+                          </span>
+                        ) : null}
+                      </p>
+                      <h3 className="font-heading text-ink mt-4 text-2xl tracking-tight">
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          className="hover:text-action focus-visible:outline-action rounded-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
+                        >
+                          {post.title}
+                        </Link>
+                      </h3>
+                      <p className="text-ink-muted mt-4 line-clamp-3 leading-relaxed">
+                        {post.description}
+                      </p>
+                    </div>
                   </article>
                 </li>
               ))}
