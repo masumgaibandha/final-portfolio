@@ -1,5 +1,3 @@
-import type { BlogPost } from "@/types";
-
 export const blogPage = {
   seoTitle: "Blog | MasumDev",
   metaDescription:
@@ -11,13 +9,13 @@ export const blogPage = {
 } as const;
 
 /*
- * Empty until real posts exist. Do NOT seed this with placeholder or invented
- * articles: the page renders an honest empty state when the list is empty, and
- * a fabricated post would misrepresent published work. Add entries here as
- * pieces are actually written.
+ * Posts are no longer listed here — they come from `content/blog/*.mdx` via
+ * `src/lib/blog.ts`. This file holds only the page's own copy.
+ *
+ * Do not add placeholder or invented articles to `content/blog`: the index
+ * renders an honest empty state when nothing is published, and a fabricated
+ * post would misrepresent real work.
  */
-export const blogPosts: readonly BlogPost[] = [];
-
 export const blogEmptyState = {
   heading: "No posts published yet",
   description:

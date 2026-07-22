@@ -1,0 +1,52 @@
+---
+title: "Example article — copy this file to start a new post"
+description: "A template showing every supported frontmatter field and how the MDX body is styled. Kept as a draft so it never publishes."
+publishedAt: "2026-07-22"
+updatedAt: "2026-07-22"
+tags:
+  - Next.js
+  - Web Development
+draft: true
+---
+
+This file is a template, not a published article. It stays out of production
+because `draft: true`, and it is here so you have a working reference to copy.
+
+## Adding a new post
+
+Create `content/blog/your-slug.mdx`. The filename becomes the URL, so
+`cold-email-infrastructure.mdx` is served at `/blog/cold-email-infrastructure`.
+
+Set `draft: false` when it is ready. Drafts are visible while running
+`npm run dev` and excluded from `npm run build`, so you can preview a post
+before anyone else can reach it.
+
+## Adding images
+
+Put them in `public/blog/your-slug/`, then reference them from the web root:
+
+```mdx
+![A short, meaningful description of the image](/blog/your-slug/diagram.webp)
+```
+
+To give a post a cover, add both fields to the frontmatter — `coverAlt` is
+required whenever `coverImage` is set, and the build fails without it:
+
+```yaml
+coverImage: "/blog/your-slug/cover.webp"
+coverAlt: "Meaningful image description"
+```
+
+## Formatting
+
+Ordinary Markdown works, and everything picks up the site's styles:
+
+- Bulleted lists
+- **Bold** and `inline code`
+- [Internal links](/projects) and [external ones](https://nextjs.org)
+
+> Block quotes are set in the editorial italic with a terracotta rule.
+
+Frontmatter is validated at build time, so a malformed date or a missing
+description fails the build with the filename rather than shipping broken
+metadata.

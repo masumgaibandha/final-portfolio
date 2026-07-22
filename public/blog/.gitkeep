@@ -1,0 +1,3 @@
+# Article images live here, one folder per post slug:
+#   public/blog/<article-slug>/cover.webp
+# Referenced from MDX as /blog/<article-slug>/cover.webp

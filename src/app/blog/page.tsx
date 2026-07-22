@@ -8,7 +8,8 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { Section } from "@/components/ui/Section";
-import { blogEmptyState, blogPage, blogPosts } from "@/data/blog";
+import { blogEmptyState, blogPage } from "@/data/blog";
+import { formatPostDate, getAllPosts } from "@/lib/blog";
 
 export const metadata: Metadata = {
   title: { absolute: blogPage.seoTitle },
@@ -28,6 +29,9 @@ export const metadata: Metadata = {
 };
 
 export default function BlogPage() {
+  /* Read from content/blog at build time; empty state renders when there are none. */
+  const blogPosts = getAllPosts();
+
   return (
     <>
       <a
@@ -70,15 +74,18 @@ export default function BlogPage() {
                 <li key={post.slug} data-reveal>
                   <article className="border-hairline bg-surface card-interactive flex h-full flex-col border p-8">
                     <p className="text-ink-muted text-xs font-semibold tracking-[0.16em] uppercase">
+                      {/* Shared formatter: fixed locale + UTC, so the server and
+                          client can't disagree and trigger a hydration error. */}
                       <time dateTime={post.publishedAt}>
-                        {new Date(post.publishedAt).toLocaleDateString("en-GB", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
+                        {formatPostDate(post.publishedAt)}
                       </time>
                       {" · "}
                       {post.readingMinutes} min read
+                      {post.draft ? (
+                        <span className="bg-accent text-accent-ink ml-2 rounded-full px-2 py-0.5 text-[0.65rem] tracking-normal normal-case">
+                          Draft
+                        </span>
+                      ) : null}
                     </p>
                     <h3 className="font-heading text-ink mt-4 text-2xl tracking-tight">
                       <Link
@@ -89,7 +96,7 @@ export default function BlogPage() {
                       </Link>
                     </h3>
                     <p className="text-ink-muted mt-4 leading-relaxed">
-                      {post.excerpt}
+                      {post.description}
                     </p>
                   </article>
                 </li>

@@ -104,11 +104,22 @@ export interface SocialLink {
   href: string;
 }
 
-export interface BlogPost {
-  slug: string;
+/** Frontmatter as authored in `content/blog/*.mdx`. */
+export interface BlogFrontmatter {
   title: string;
-  excerpt: string;
-  /** ISO date, used for both display and the `datetime` attribute. */
+  description: string;
+  /** ISO date (YYYY-MM-DD), used for display and the `datetime` attribute. */
   publishedAt: string;
+  updatedAt?: string;
+  coverImage?: string;
+  coverAlt?: string;
+  tags: readonly string[];
+  draft: boolean;
+}
+
+/** A post as the app consumes it: frontmatter plus derived fields. */
+export interface BlogPost extends BlogFrontmatter {
+  /** Filename without the extension, and the URL segment. */
+  slug: string;
   readingMinutes: number;
 }
