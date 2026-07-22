@@ -46,9 +46,15 @@ export function NavLinks() {
         </ul>
       </nav>
 
+      {/*
+       * `action` is the shared primary-button tone, so this picks up the same
+       * terracotta fill, darker hover, white label, lifted hover shadow, press
+       * state and terracotta focus ring as every other primary CTA — size and
+       * shape are unchanged.
+       */}
       <ButtonLink
         href="/#contact"
-        tone="ink"
+        tone="action"
         className="hidden sm:inline-flex"
         /* Not "active" styling — it is a button — but still announced. */
         aria-current={isContactInView ? "location" : undefined}

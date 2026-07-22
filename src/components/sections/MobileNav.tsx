@@ -89,8 +89,9 @@ export function MobileNav() {
               href="/#contact"
               onClick={() => setIsOpen(false)}
               aria-current={isContactInView ? "location" : undefined}
+              /* Same CTA as the desktop header, so it takes the same tone. */
               className={buttonClass({
-                tone: "ink",
+                tone: "action",
                 size: "lg",
                 fullWidth: true,
                 className: "mt-8",
