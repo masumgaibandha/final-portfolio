@@ -9,7 +9,7 @@ import { testimonials, testimonialsIntro } from "@/data/testimonials";
 
 export function Testimonials() {
   return (
-    <Section id="testimonials" tone="canvas" labelledBy="testimonials-heading">
+    <Section id="testimonials" tone="canvasAlt" labelledBy="testimonials-heading">
       <SectionHeading
         label={testimonialsIntro.label}
         heading={testimonialsIntro.heading}

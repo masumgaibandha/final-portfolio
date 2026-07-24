@@ -7,7 +7,7 @@ import { services, servicesIntro } from "@/data/services";
 
 export function Services() {
   return (
-    <Section id="services" labelledBy="services-heading">
+    <Section id="services" tone="canvasAlt" labelledBy="services-heading">
       <SectionHeading
         label={servicesIntro.label}
         heading={servicesIntro.heading}

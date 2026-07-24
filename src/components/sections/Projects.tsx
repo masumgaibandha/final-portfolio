@@ -9,7 +9,7 @@ import { projects, projectsIntro } from "@/data/projects";
 
 export function Projects() {
   return (
-    <Section id="projects" tone="canvasAlt" labelledBy="projects-heading">
+    <Section id="projects" tone="canvas" labelledBy="projects-heading">
       <SectionHeading
         label={projectsIntro.label}
         heading={projectsIntro.heading}

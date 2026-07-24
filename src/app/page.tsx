@@ -7,6 +7,7 @@ import { OutreachStack } from "@/components/sections/OutreachStack";
 import { Pricing } from "@/components/sections/Pricing";
 import { Projects } from "@/components/sections/Projects";
 import { Services } from "@/components/sections/Services";
+import { Skills } from "@/components/sections/Skills";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 
@@ -29,6 +30,7 @@ export default function Home() {
          */}
         <Hero />
         <About />
+        <Skills />
         <Services />
         <Projects />
         <Testimonials />

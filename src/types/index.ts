@@ -1,3 +1,5 @@
+import type { IconType } from "react-icons";
+
 export interface NavLink {
   label: string;
   href: string;
@@ -8,9 +10,26 @@ export interface TrustIndicator {
   label: string;
 }
 
-export interface SkillGroup {
+export interface Skill {
+  name: string;
+  /**
+   * Brand mark, or a generic glyph where no brand exists. Always decorative:
+   * every skill renders its name as text beside it, so the icon carries no
+   * information of its own.
+   */
+  icon: IconType;
+  /**
+   * Tailwind text-colour class for the mark. Must be written as a literal in
+   * `src/data/skills.ts` — a class assembled at runtime is invisible to
+   * Tailwind's scanner and would never be emitted.
+   */
+  iconClass: string;
+}
+
+export interface SkillCategory {
+  id: string;
   title: string;
-  items: readonly string[];
+  skills: readonly Skill[];
 }
 
 export interface Service {
