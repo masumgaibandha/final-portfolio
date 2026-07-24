@@ -47,6 +47,10 @@ Two Cloudflare gotchas cost real debugging time here, so don't re-derive them:
 
 No test runner is configured. Don't reference one until it's actually installed. Before declaring work done, `npm run build` must pass — it catches Server/Client Component boundary errors that `dev` tolerates.
 
+## Git attribution
+
+Use the repository owner's configured Git identity for commits. Never add `Co-Authored-By`, `Generated-By`, or other AI attribution trailers to commit messages.
+
 ## Stack
 
 - **Next.js** (App Router) + **TypeScript** — strict mode, no `any`
