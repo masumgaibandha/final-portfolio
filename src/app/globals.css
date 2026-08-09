@@ -48,6 +48,15 @@
    */
   --type-display: clamp(2.35rem, 4.5vw, 4.125rem);
   --type-section: clamp(1.75rem, 2.8vw, 2.5rem);
+
+  /*
+   * Route-scoped only (src/app/masterclass/.../layout.tsx sets
+   * --font-hind-siliguri via next/font). Playfair Display has no Bengali
+   * glyph coverage, so the masterclass route overrides headings with the
+   * `font-bengali` utility below rather than relying on inheriting
+   * `--font-heading`. Unused elsewhere, so this changes no existing route.
+   */
+  --font-bengali: var(--font-hind-siliguri);
 }
 
 /*
@@ -194,6 +203,13 @@
   &:hover {
     border-color: color-mix(in srgb, var(--color-action) 22%, transparent);
   }
+}
+
+/* Bengali text (masterclass route only) — see the --font-bengali note above. */
+@utility font-bengali {
+  font-family:
+    var(--font-bengali), "Noto Sans Bengali", ui-sans-serif, system-ui,
+    sans-serif;
 }
 
 /* The one gradient the design allows: the warm wash behind the hero. */

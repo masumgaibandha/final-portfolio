@@ -122,7 +122,7 @@ public/                     portraits copied from resources/
 
 Conventions:
 
-- **Server Components by default.** Only three client components exist and it should stay that way: `MobileNav`, `ContactForm`, and `RevealOnScroll`. Keep client boundaries at the leaf, not the section — `Navbar` and `Contact` are both server components that render a client leaf. Testimonials are a static masonry grid, deliberately not a carousel.
+- **Server Components by default.** Four client components exist today: `MobileNav`, `ContactForm`, `RevealOnScroll`, and `AffiliateLink` (its `onClick` analytics hook needs the browser). Keep client boundaries at the leaf, not the section — `Navbar` and `Contact` are both server components that render a client leaf. Testimonials are a static masonry grid, deliberately not a carousel. The masterclass sales page (below) adds none of its own — it stays fully server-rendered.
 - **Content lives in `src/data/*.ts`**, typed against `src/types/`. Sections map over data and stay presentational — no inline copy arrays inside JSX.
 - **`Section` owns vertical rhythm and banding.** It applies the `py-*` scale and alternates `bg-bg` / `bg-surface`. Individual sections must not set their own vertical padding, or spacing drifts.
 - **Every section takes an `id`** matching its navbar anchor (`#about`, `#services`, …); scroll offset is handled once via `scroll-mt-*`, not per-link.
@@ -147,6 +147,17 @@ The look is quiet and typographic — the interest comes from scale, whitespace,
 - Descriptive `alt` on portraits; decorative shapes get `alt=""`.
 - Root `metadata` export with `metadataBase`, `title.template`, description, OpenGraph + Twitter card, and a JSON-LD `Person` block in the layout.
 - Portraits go through `next/image` with explicit dimensions and `priority` on the hero image.
+
+## Masterclass sales page
+
+`src/app/masterclass/lead-generation-cold-email/` is a standalone Bengali sales page for a paid 2-day live masterclass, built as **Phase 1 (UI-only)** of a larger funnel. It does not share the homepage's `Navbar`/`Footer`/`Section` — it has its own minimal header/footer (`src/components/masterclass/MasterclassHeader.tsx`, `MasterclassFooter.tsx`) and its own tighter-spacing `MasterclassSection` wrapper (`py-14 md:py-20` vs. the homepage's `py-24 md:py-32`). It is not linked from the main portfolio navigation yet.
+
+Not yet implemented (later phases): MongoDB, API routes, SSLCommerz, Meta Pixel/CAPI, confirmation email. The registration form is a static, non-functional preview — see below.
+
+- **Bengali font is route-scoped.** `src/app/masterclass/lead-generation-cold-email/layout.tsx` loads `Hind_Siliguri` via `next/font/google` as `--font-hind-siliguri`, applied only through a wrapper `<div lang="bn">` in that layout — the root layout's `<html>` (Playfair Display / Poppins) is untouched, so the portfolio, blog, and resources routes render exactly as before. `globals.css` gained one additive `--font-bengali` token and one additive `font-bengali` `@utility` (mapped to `--font-hind-siliguri`) — nothing existing was changed. Because the global `h1,h2,h3,h4 { font-family: var(--font-heading) }` base rule (Playfair, which has no Bengali glyphs) still applies inside the wrapper by specificity, every heading in `src/components/masterclass/` explicitly carries the `font-bengali` class rather than relying on inheritance.
+- **Checkout is intentionally disabled.** `masterclassConfig.checkoutEnabled` in `src/data/masterclass-content.ts` is `false`. `Registration.tsx` reads it to disable the submit button (label: "পেমেন্ট সেটআপ চলছে") and render a development-only notice explaining payment integration is pending — both driven by that one constant, not a separate build flag, so flipping it to `true` once SSLCommerz lands is a one-line change plus wiring the actual submit handler. The form has no `onSubmit` and needs no client JS in this phase, so `Registration.tsx` stays a Server Component.
+- **Route metadata sets `robots: { index: false, follow: false }`** and the page is deliberately **not** added to `src/app/sitemap.ts` — it isn't ready for public discovery until checkout is functional.
+- **Proof assets**: raw screenshots stay in `resources/master_class_assets/` and are never served directly. Sanitized derivatives live in `public/masterclass/` — cropped with PowerShell/`System.Drawing` (no WebP encoder was available in this environment, so derivatives are `.png`; revisit if `sharp`/ImageMagick/a WebP encoder is ever added). Used: `upwork-profile-proof.png` (uncropped — no client identifiers), `campaign-total-sent.png` and `campaign-chart.png` (cropped from `Latest_Campaign.png` to remove the Windows taskbar, timestamp, and org-menu, and to exclude the `$100,435` figure), `inbox-placement-result.png` (cropped from `inbox-placement-test.png` to remove the client/campaign name and sidebar), `feedback-five-star.png` (cropped from `upwork_Feedback_2.png` to exclude the 4.4★ row). Excluded entirely: `upwork_catalog.png` (corrupted metrics area), `fiverr_review.png` (exposes a findable client username), the PDF (copy reference only, never published).
 
 ## Resources
 
