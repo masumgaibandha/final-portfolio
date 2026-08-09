@@ -1,9 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { getSecurityEnv, isRegistrationEnabled } from "@/lib/env";
 import { isPrivacyPolicyPublished } from "@/lib/masterclass/constants";
-import { isRegistrationEnabled } from "@/lib/env";
+import { isRequestSameOrigin } from "@/lib/masterclass/origin-validation";
+import { checkRateLimit } from "@/lib/masterclass/rate-limit";
 import { registerForMasterclass } from "@/lib/masterclass/registration-service";
 import { extractClientIp, extractClientUserAgent } from "@/lib/masterclass/request-context";
+import { getAllowedTurnstileHostnames, validateTurnstileToken } from "@/lib/masterclass/turnstile";
 import {
   idempotencyKeySchema,
   normalizeBangladeshPhone,
@@ -21,23 +24,62 @@ export const dynamic = "force-dynamic";
 
 const MAX_BODY_BYTES = 10_000;
 
-function noStoreJson(body: unknown, status: number): NextResponse {
-  return NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
+function noStoreJson(
+  body: unknown,
+  status: number,
+  extraHeaders?: Record<string, string>,
+): NextResponse {
+  return NextResponse.json(body, {
+    status,
+    headers: { "Cache-Control": "no-store", ...extraHeaders },
+  });
 }
 
+/*
+ * Secure processing order (Phase 3B). Each step's failure response is
+ * generic and never reveals *why* — a rejected request looks the same
+ * whether it failed origin validation, rate limiting, or bot verification,
+ * beyond the necessarily-distinct HTTP status and error code.
+ */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   /*
-   * Both checked first, before anything else touches the request body or
-   * MongoDB. The privacy-policy check is deliberately folded into the same
-   * generic response as the enabled-flag check — an accidental
-   * `MASTERCLASS_REGISTRATION_ENABLED=true` with no published privacy
-   * policy must fail exactly the same way from the outside, not leak that
-   * it's "closer to open" than the normal disabled state.
+   * 1. Registration/privacy/security configuration gate — checked first,
+   * before anything else touches the request body or MongoDB. Folding the
+   * security-config check into the same generic response as the
+   * enabled-flag/privacy-policy checks means a misconfigured deployment
+   * (e.g. TURNSTILE_SECRET_KEY forgotten) fails exactly like the ordinary
+   * disabled state from the outside — never "closer to open."
    */
-  if (!isRegistrationEnabled() || !isPrivacyPolicyPublished()) {
+  const securityEnv = getSecurityEnv();
+  if (!isRegistrationEnabled() || !isPrivacyPolicyPublished() || !securityEnv) {
     return noStoreJson({ error: "REGISTRATION_NOT_OPEN" }, 503);
   }
 
+  // 2. Same-origin validation — no permissive CORS, no reflected origin.
+  if (!isRequestSameOrigin(request.headers, securityEnv.allowedOrigins)) {
+    return noStoreJson({ error: "REQUEST_NOT_ALLOWED" }, 403);
+  }
+
+  // 3. Trusted request-context extraction.
+  const clientIpAddress = extractClientIp(request.headers);
+  const clientUserAgent = extractClientUserAgent(request.headers);
+  if (!clientIpAddress) {
+    return noStoreJson({ error: "REQUEST_CONTEXT_UNAVAILABLE" }, 400);
+  }
+
+  // 4. IP rate-limit check.
+  const ipRateLimit = await checkRateLimit({
+    scope: "ip",
+    subject: clientIpAddress,
+    secret: securityEnv.rateLimitSecret,
+  });
+  if (!ipRateLimit.allowed) {
+    return noStoreJson({ error: "RATE_LIMITED" }, 429, {
+      "Retry-After": String(ipRateLimit.retryAfterSeconds),
+    });
+  }
+
+  // 5. Existing body-size enforcement (content-type + idempotency-key are header checks that belong alongside it, before the body is trusted).
   const contentType = request.headers.get("content-type") ?? "";
   if (!contentType.toLowerCase().includes("application/json")) {
     return noStoreJson({ error: "UNSUPPORTED_MEDIA_TYPE" }, 415);
@@ -55,6 +97,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return noStoreJson({ error: "PAYLOAD_TOO_LARGE" }, 413);
   }
 
+  // 6. JSON parsing and schema validation, including the Turnstile token.
   let parsedBody: unknown;
   try {
     parsedBody = JSON.parse(rawBody);
@@ -83,14 +126,48 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
+  // 7. Turnstile Siteverify validation.
+  const turnstileResult = await validateTurnstileToken({
+    token: inputResult.data.turnstileToken,
+    remoteIp: clientIpAddress,
+    secretKey: securityEnv.turnstileSecretKey,
+    allowedHostnames: getAllowedTurnstileHostnames(),
+  });
+  if (!turnstileResult.ok) {
+    const status = turnstileResult.reason === "VERIFICATION_UNAVAILABLE" ? 503 : 403;
+    return noStoreJson({ error: turnstileResult.reason }, status);
+  }
+
+  /*
+   * 8. Normalized-email rate-limit check. Note: an *exact* idempotent retry
+   * (same Idempotency-Key, same body) still reaches this point and still
+   * consumes one unit of both the IP and email rate-limit capacity, even
+   * though `registerForMasterclass` below will just return the same cached
+   * result rather than writing anything new. This is intentional — skipping
+   * rate-limit accounting for "looks like a replay" requests would let an
+   * attacker probe the limiter's behavior for free, and legitimate retries
+   * are rare enough that the extra capacity consumed is not a real cost.
+   */
+  const emailRateLimit = await checkRateLimit({
+    scope: "email",
+    subject: emailNormalized,
+    secret: securityEnv.rateLimitSecret,
+  });
+  if (!emailRateLimit.allowed) {
+    return noStoreJson({ error: "RATE_LIMITED" }, 429, {
+      "Retry-After": String(emailRateLimit.retryAfterSeconds),
+    });
+  }
+
+  // 9-10. Existing transactional registration/order service, then a sanitized response — unchanged from Phase 2.
   try {
     const result = await registerForMasterclass({
       input: inputResult.data,
       emailNormalized,
       phoneE164,
       idempotencyKey: idempotencyKeyResult.data,
-      clientIpAddress: extractClientIp(request.headers),
-      clientUserAgent: extractClientUserAgent(request.headers),
+      clientIpAddress,
+      clientUserAgent,
     });
 
     switch (result.kind) {

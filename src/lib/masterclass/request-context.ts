@@ -2,14 +2,21 @@
  * Server-derived request context only — nothing here ever reads a
  * client-submitted IP or user-agent value from a request body. Neither
  * function logs its input or output; invalid/missing values resolve to
- * `null` rather than throwing, so a malformed header can never fail a
- * registration.
+ * `null` rather than throwing — the registration route decides whether a
+ * missing IP is fatal (it is, once registration is enabled: see
+ * `REQUEST_CONTEXT_UNAVAILABLE` in the route handler), not this module.
  *
- * Trusted-proxy behavior must be reconfirmed for the final Vercel
- * deployment before `clientIpAddress` is used for Meta CAPI — Vercel's edge
- * network sets `x-forwarded-for` itself today, but if a custom proxy or CDN
- * is ever added in front of it, "the first syntactically valid entry" may
- * no longer be the genuine client IP and this logic will need revisiting.
+ * `x-vercel-forwarded-for` is checked first — Vercel's own edge network sets
+ * it, and unlike the generic `x-forwarded-for` it can't be spoofed by a
+ * client sending its own copy of that header, since Vercel overwrites it.
+ * `x-forwarded-for`/`x-real-ip` remain as fallbacks for non-Vercel
+ * environments (e.g. local dev).
+ *
+ * IMPORTANT: if a custom proxy or CDN is ever placed in front of Vercel,
+ * this trust chain must be re-evaluated — "the first syntactically valid
+ * entry in x-vercel-forwarded-for" stops being trustworthy the moment
+ * something between the real client and Vercel can inject its own header
+ * value ahead of Vercel's.
  */
 
 const MAX_IP_LENGTH = 64;
@@ -30,16 +37,28 @@ function isSyntacticallyValidIp(candidate: string): boolean {
   return candidate.includes(":") && IPV6_PATTERN.test(candidate);
 }
 
-/** Scans a comma-separated `x-forwarded-for` list and keeps the first entry that is syntactically a valid IP. */
+/** Scans a comma-separated forwarded-IP header and keeps the first entry that is syntactically a valid IP. Never trusts an unbounded chain — each candidate is length-checked before use, and the winner is re-capped defensively. */
+function firstValidIpFrom(headerValue: string): string | null {
+  for (const candidate of headerValue.split(",")) {
+    const trimmed = candidate.trim();
+    if (isSyntacticallyValidIp(trimmed)) {
+      return trimmed.slice(0, MAX_IP_LENGTH);
+    }
+  }
+  return null;
+}
+
 export function extractClientIp(headers: Headers): string | null {
+  const vercelForwardedFor = headers.get("x-vercel-forwarded-for");
+  if (vercelForwardedFor) {
+    const fromVercel = firstValidIpFrom(vercelForwardedFor);
+    if (fromVercel) return fromVercel;
+  }
+
   const forwardedFor = headers.get("x-forwarded-for");
   if (forwardedFor) {
-    for (const candidate of forwardedFor.split(",")) {
-      const trimmed = candidate.trim();
-      if (isSyntacticallyValidIp(trimmed)) {
-        return trimmed.slice(0, MAX_IP_LENGTH);
-      }
-    }
+    const fromForwardedFor = firstValidIpFrom(forwardedFor);
+    if (fromForwardedFor) return fromForwardedFor;
   }
 
   const realIp = headers.get("x-real-ip")?.trim();

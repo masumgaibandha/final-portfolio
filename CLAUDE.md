@@ -197,6 +197,36 @@ Three public Bengali pages exist: `/privacy-policy`, `/terms-and-conditions`, `/
 
 **This legal copy is an operational draft**, written to accurately describe the funnel as built — it is not a substitute for review by the site owner and, ideally, a professional familiar with Bangladeshi consumer/e-commerce law before real payments go live.
 
+### Phase 3B — Abuse protection (Turnstile + rate limiting, both inactive)
+
+Origin validation, rate limiting, and Cloudflare Turnstile verification are fully implemented but **cannot run yet** — `MASTERCLASS_REGISTRATION_ENABLED` is still `false`, and even if it were flipped, `getSecurityEnv()` (`src/lib/env.ts`) returns `null` while `TURNSTILE_SECRET_KEY`/`MASTERCLASS_RATE_LIMIT_SECRET`/`MASTERCLASS_ALLOWED_ORIGINS` are unset, which the route treats identically to the disabled state: a generic `503 REGISTRATION_NOT_OPEN`, before any body parsing, origin check, rate-limit lookup, or MongoDB access. No real Turnstile key exists anywhere in this repo — `.env.example` has empty placeholders only, and the code never falls back to Cloudflare's official always-passes test secret.
+
+**Secure processing order** for the (currently unreachable) enabled path, in `src/app/api/masterclass/registrations/route.ts`:
+1. Registration/privacy/security-config gate (`isRegistrationEnabled` + `isPrivacyPolicyPublished` + `getSecurityEnv`) → `503 REGISTRATION_NOT_OPEN`.
+2. Same-origin validation (`origin-validation.ts`) → `403 REQUEST_NOT_ALLOWED`.
+3. Trusted request-context extraction (`request-context.ts`) → `400 REQUEST_CONTEXT_UNAVAILABLE` if no valid IP.
+4. IP rate-limit check (`rate-limit.ts`, scope `"ip"`) → `429 RATE_LIMITED`.
+5. Content-Type + `Idempotency-Key` header checks, then body-size enforcement (unchanged from Phase 2).
+6. JSON parsing + `registrationInputSchema` (now includes `turnstileToken`).
+7. Turnstile Siteverify (`turnstile.ts`) → `403 BOT_VERIFICATION_FAILED` or `503 VERIFICATION_UNAVAILABLE`.
+8. Email rate-limit check (scope `"email"`) → `429 RATE_LIMITED`. **An exact idempotent retry (same `Idempotency-Key`) still consumes rate-limit capacity at both this step and step 4** — intentional, documented in the route's own comment, since skipping accounting for "looks like a replay" requests would let an attacker probe the limiter for free.
+9. The existing transactional `registerForMasterclass` call — Phase 2's duplicate-registration and idempotency-conflict semantics are completely unchanged by this phase.
+10. Sanitized response — still only `publicRegistrationRef`/`publicOrderRef`/`status` on success.
+
+**Origin validation** (`src/lib/masterclass/origin-validation.ts`) is not general CORS — it never reflects an origin or sets `Access-Control-*`, only answers true/false for the registration route specifically. Requires an exact match against `MASTERCLASS_ALLOWED_ORIGINS`; rejects missing, `null`, malformed, or unlisted origins; if `Sec-Fetch-Site` is present it must say `same-origin`/`same-site`. In production, any localhost entry in the allowlist is filtered out as a defense-in-depth safety net regardless of what's configured.
+
+**Trusted IP** (`src/lib/masterclass/request-context.ts`) now prefers `x-vercel-forwarded-for` (set by Vercel's edge, not spoofable by the client) before falling back to `x-forwarded-for`/`x-real-ip`. Capped at 64 chars, only the first syntactically valid entry in a comma-separated chain is kept. **If a proxy or CDN is ever placed in front of Vercel, this trust chain needs re-evaluation** — see the doc comment on `extractClientIp`.
+
+**Rate limiting** (`src/lib/masterclass/rate-limit.ts`) is MongoDB-backed, collection `masterclass_rate_limits`. Each document stores only `scope`, an HMAC-SHA256 `subjectHash` (keyed by `MASTERCLASS_RATE_LIMIT_SECRET`, `node:crypto`, never the raw IP/email), `windowStart`, `count`, `expiresAt`, `createdAt`/`updatedAt` — the raw subject is never persisted. Atomic fixed-window counting via one upserting `findOneAndUpdate` per check (unique index on `(scope, subjectHash, windowStart)`), so concurrent requests can't read a stale count. TTL index on `expiresAt` (`expireAfterSeconds: 0`) auto-deletes each window's document a 5-minute safety buffer after it closes. Limits: **IP — 30/10 min** (kept generous because Bangladeshi mobile/carrier NAT can place many unrelated legitimate students behind one shared public IP); **normalized email — 5/60 min**. A block returns `429 RATE_LIMITED` with an accurate `Retry-After` and `Cache-Control: no-store`; the key, count, email, and IP are never revealed in the response.
+
+**Turnstile** (`src/lib/masterclass/turnstile.ts`) calls Cloudflare's Siteverify with an `AbortController` timeout, at most two attempts sharing one generated `idempotency_key` (Cloudflare's documented safe-retry mechanism), and defensively parses the response. Requires `success === true`, `action === "masterclass_registration"`, and `hostname` in the environment-appropriate allowlist (`masumdev.com`/`www.masumdev.com` only in production — localhost is never accepted there). Every failure mode (timeout, malformed response, action mismatch, hostname mismatch, expired/replayed token, Cloudflare-side failure) collapses to one of exactly two generic reasons — `BOT_VERIFICATION_FAILED` or `VERIFICATION_UNAVAILABLE` — never a raw Cloudflare error code or response body. The token itself is never logged or persisted.
+
+**UI is untouched by this phase.** `Registration.tsx` still renders no Turnstile widget, both consent checkboxes and the submit button are still `disabled`, and nothing calls this route. Phase 3C adds the client widget and real form wiring once production Turnstile/rate-limit keys exist.
+
+**Before Turnstile is activated for real users**: `/privacy-policy` must be updated to describe it (the policy currently says Meta tracking isn't active — Turnstile isn't mentioned there yet either and needs to be added), and `policyVersions.privacy` must be bumped at the same time so existing consent records stay historically accurate. Don't activate first and document later.
+
+**Vercel's WAF/firewall may be added later as an additional edge layer** (e.g. an Attack Challenge Mode or rate-limiting rule in the Vercel dashboard), but application-level protection (this phase) must not depend on it being present — the app's own origin check, rate limiter, and Turnstile verification must hold up on their own regardless of what edge tooling is or isn't configured.
+
 ## Resources
 
 `resources/` holds design input, not app assets — copy what's needed into `public/`, don't import from it.

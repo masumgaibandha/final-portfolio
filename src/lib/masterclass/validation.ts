@@ -75,6 +75,12 @@ export const registrationInputSchema = z.object({
   termsAccepted: z.literal(true, "Terms and privacy acceptance is required."),
   /* Always explicit, always separate from terms acceptance, defaults to false. */
   marketingConsent: z.boolean().default(false),
+  /* Cloudflare Turnstile client token — verified server-side via Siteverify, never trusted on its presence alone. */
+  turnstileToken: z
+    .string()
+    .trim()
+    .min(1, "Verification token is required.")
+    .max(2048, "Verification token is too long."),
   attribution: attributionInputSchema.optional(),
 });
 
