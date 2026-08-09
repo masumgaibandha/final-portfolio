@@ -39,6 +39,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# raw proof-asset screenshots — never committed; only sanitized derivatives
+# in public/masterclass/ are published. See CLAUDE.md.
+/resources/master_class_assets/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

@@ -6,6 +6,7 @@ import { LuMail } from "react-icons/lu";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/ui/Logo";
 import { footer } from "@/data/contact";
+import { legalPageLinks } from "@/data/legal-content";
 import { footerLinks, site, socialLinks } from "@/data/site";
 
 /*
@@ -99,11 +100,25 @@ export function Footer() {
 
       {/*
        * Full-bleed bottom bar so the copyright reads as the page's final rule
-       * rather than another item stacked in the left column.
+       * rather than another item stacked in the left column. The masterclass
+       * legal pages (added Phase 3A) get a small link row here too, rather
+       * than a new column in the grid above.
        */}
       <div className="border-on-dark/15 border-t">
-        <Container className="py-5">
+        <Container className="flex flex-col gap-3 py-5 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-on-dark-muted text-xs">{footer.copyright}</p>
+          <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
+            {legalPageLinks.map((link) => (
+              <li key={link.slug}>
+                <Link
+                  href={link.href}
+                  className="text-on-dark-muted hover:text-action-dark focus-visible:outline-action-dark rounded-sm text-xs transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </Container>
       </div>
     </footer>
