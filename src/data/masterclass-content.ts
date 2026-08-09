@@ -273,6 +273,39 @@ export const registration = {
     "Development note: Secure payment integration (SSLCommerz) এখনও সংযুক্ত করা হয়নি। এই ফর্মটি বর্তমানে শুধু preview হিসেবে দেখানো হচ্ছে; জমা দেওয়া সম্ভব নয়।",
 } as const;
 
+/*
+ * Only rendered by MasterclassRegistrationForm.tsx, which itself only
+ * mounts when `formEnabled` is true — see Registration.tsx. Under the
+ * current configuration this copy is unused, but it's written now so the
+ * interactive form is complete and correct for when the gates open.
+ */
+export const registrationForm = {
+  loadingLabel: "জমা হচ্ছে...",
+  errorSummaryHeading: "ফর্মে কিছু তথ্য ঠিক নেই",
+  nameError: "অনুগ্রহ করে আপনার পুরো নাম লিখুন (কমপক্ষে ২ অক্ষর)।",
+  emailError: "অনুগ্রহ করে একটি সঠিক ইমেইল ঠিকানা লিখুন।",
+  phoneError: "অনুগ্রহ করে সঠিক বাংলাদেশি মোবাইল নম্বর লিখুন (যেমন 01XXXXXXXXX)।",
+  consentError: "রেজিস্ট্রেশন সম্পন্ন করতে শর্তাবলী মেনে নেওয়া আবশ্যক।",
+  turnstileMissingError: "অনুগ্রহ করে যাচাইকরণ সম্পন্ন করুন।",
+  turnstileExpiredError: "যাচাইকরণের মেয়াদ শেষ হয়ে গেছে। অনুগ্রহ করে আবার যাচাই করুন।",
+  turnstileWidgetError: "যাচাইকরণ লোড করা যায়নি। অনুগ্রহ করে পেজ রিফ্রেশ করে আবার চেষ্টা করুন।",
+  successHeading: "তথ্য গৃহীত হয়েছে",
+  successBody:
+    "আপনার রেজিস্ট্রেশন তথ্য গৃহীত হয়েছে। Payment gateway এখনও সংযুক্ত করা হয়নি—সংযুক্ত হওয়ার পর পরবর্তী ধাপ আপনার ইমেইলে জানানো হবে।",
+  genericError:
+    "দুঃখিত, রেজিস্ট্রেশন সম্পন্ন করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন, অথবা masum@masumdev.com-এ যোগাযোগ করুন।",
+  /* REGISTRATION_CONFLICT — the submitted email is already registered under a different phone number. Rotating the idempotency key would not fix this, so the message asks for a data correction or direct contact instead of "try again." */
+  registrationConflictError:
+    "এই ইমেইল দিয়ে ভিন্ন তথ্যসহ ইতিমধ্যে একটি রেজিস্ট্রেশন আছে। অনুগ্রহ করে আপনার ইমেইল ও মোবাইল নম্বর যাচাই করুন, অথবা masum@masumdev.com-এ যোগাযোগ করুন।",
+  /* IDEMPOTENCY_CONFLICT — the previous idempotency key is now invalid; the next submit must use a fresh one, so this explicitly invites a retry. */
+  idempotencyConflictError:
+    "একটি সাময়িক সমস্যা হয়েছে। অনুগ্রহ করে আবার \"এখনই ভর্তি হোন\" বাটনে চাপ দিন।",
+  unavailableError: "সিস্টেমটি সাময়িকভাবে অনুপলব্ধ। অনুগ্রহ করে একটু পর আবার চেষ্টা করুন।",
+  networkError: "নেটওয়ার্ক সমস্যার কারণে অনুরোধ পাঠানো যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+  rateLimitedPrefix: "অনুরোধের সীমা অতিক্রম হয়েছে। অনুগ্রহ করে",
+  rateLimitedSuffix: "সেকেন্ড পর আবার চেষ্টা করুন।",
+} as const;
+
 export const faqItems: readonly FaqItem[] = [
   {
     id: "beginners",

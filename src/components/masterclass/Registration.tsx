@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { LuCalendar, LuCircleAlert, LuShieldCheck } from "react-icons/lu";
 
+import { MasterclassRegistrationForm } from "@/components/masterclass/MasterclassRegistrationForm";
 import {
   MasterclassSection,
   eyebrowClass,
   eyebrowDotClass,
 } from "@/components/masterclass/MasterclassSection";
-import { masterclassConfig, registration } from "@/data/masterclass-content";
 import { legalPageLinks } from "@/data/legal-content";
+import { masterclassConfig, registration } from "@/data/masterclass-content";
+import { isRegistrationOperationallyReady } from "@/lib/env";
 
 const fieldClass =
   "border-hairline bg-canvas text-ink placeholder:text-ink-muted/70 focus-visible:border-ink focus-visible:outline-action w-full rounded-lg border px-4 py-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
@@ -21,12 +23,34 @@ const checkboxClass =
   "border-hairline text-action focus-visible:outline-action mt-0.5 size-4 shrink-0 rounded disabled:cursor-not-allowed disabled:opacity-60";
 
 /**
- * Static preview only — Phase 1 has no MongoDB, no API route, no SSLCommerz.
- * `masterclassConfig.checkoutEnabled` is a build-time constant, not runtime
- * state, so this stays a Server Component: nothing here needs client JS.
+ * `formEnabled` is the full operational-readiness gate, computed here,
+ * server-side, from five independent signals — never a single flag, and
+ * never a `NEXT_PUBLIC_` mirror of any server-only value:
+ *
+ * 1. `masterclassConfig.checkoutEnabled` (content/config flag — stays
+ *    `false` until a payment gateway exists; not touched by this phase).
+ * 2. `MASTERCLASS_REGISTRATION_ENABLED`.
+ * 3. A published privacy policy (not the `"unpublished-draft"` placeholder).
+ * 4. Complete Turnstile/rate-limit/origin security configuration
+ *    (`getSecurityEnv()` — never called directly here; see
+ *    `isRegistrationOperationallyReady()` in `@/lib/env`, which wraps it so
+ *    this component never even touches a `SecurityEnv` value, secret or
+ *    not).
+ * 5. A public Turnstile site key actually being present.
+ *
+ * Only when all five are true does this render the interactive
+ * `MasterclassRegistrationForm` (a Client Component) instead of the static,
+ * fully-disabled form below — and even then, only `formEnabled` (a boolean)
+ * and the already-public site key ever reach that component; no readiness
+ * detail, secret, or `SecurityEnv` value crosses the server/client
+ * boundary. Under the current configuration `formEnabled` is `false`, so
+ * that component — and therefore the Turnstile script, the widget, and any
+ * `fetch` call — never enters the render tree at all.
  */
 export function Registration() {
   const { checkoutEnabled } = masterclassConfig;
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const formEnabled = checkoutEnabled && isRegistrationOperationallyReady() && Boolean(turnstileSiteKey);
 
   return (
     <MasterclassSection id="registration" labelledBy="registration-heading">
@@ -75,131 +99,131 @@ export function Registration() {
           </p>
         </div>
 
-        <form
-          noValidate
-          aria-describedby={checkoutEnabled ? undefined : "registration-disabled-note"}
-          className="border-hairline bg-surface border p-6 md:p-8"
-        >
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <label htmlFor="mc-name" className={labelClass}>
-                {registration.fields.name}
-              </label>
-              <input
-                id="mc-name"
-                name="name"
-                type="text"
-                autoComplete="name"
-                placeholder={registration.fields.namePlaceholder}
-                disabled={!checkoutEnabled}
-                className={`${fieldClass} mt-2 disabled:cursor-not-allowed disabled:opacity-60`}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="mc-email" className={labelClass}>
-                {registration.fields.email}
-              </label>
-              <input
-                id="mc-email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder={registration.fields.emailPlaceholder}
-                disabled={!checkoutEnabled}
-                className={`${fieldClass} mt-2 disabled:cursor-not-allowed disabled:opacity-60`}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="mc-phone" className={labelClass}>
-                {registration.fields.phone}
-              </label>
-              <input
-                id="mc-phone"
-                name="phone"
-                type="tel"
-                autoComplete="tel"
-                placeholder={registration.fields.phonePlaceholder}
-                disabled={!checkoutEnabled}
-                className={`${fieldClass} mt-2 disabled:cursor-not-allowed disabled:opacity-60`}
-              />
-            </div>
-          </div>
-
-          <div className="mt-5 space-y-4">
-            <div className="flex items-start gap-3">
-              <input
-                id="mc-consent"
-                name="consent"
-                type="checkbox"
-                required
-                disabled={!checkoutEnabled}
-                className={checkboxClass}
-              />
-              <label htmlFor="mc-consent" className="text-ink font-bengali text-sm leading-relaxed">
-                {registration.consentPrefix}{" "}
-                <Link href={legalPageLinks[1].href} className={legalLinkClass}>
-                  {legalPageLinks[1].label}
-                </Link>
-                ,{" "}
-                <Link href={legalPageLinks[0].href} className={legalLinkClass}>
-                  {legalPageLinks[0].label}
-                </Link>{" "}
-                {registration.consentJoiner}{" "}
-                <Link href={legalPageLinks[2].href} className={legalLinkClass}>
-                  {legalPageLinks[2].label}
-                </Link>{" "}
-                {registration.consentSuffix}
-              </label>
-            </div>
-
-            {/* Separate and independently optional — never bundled with the required checkbox above. */}
-            <div className="flex items-start gap-3">
-              <input
-                id="mc-marketing-consent"
-                name="marketingConsent"
-                type="checkbox"
-                disabled={!checkoutEnabled}
-                className={checkboxClass}
-              />
-              <label
-                htmlFor="mc-marketing-consent"
-                className="text-ink-muted font-bengali text-sm leading-relaxed"
-              >
-                {registration.marketingConsentLabel}
-              </label>
-            </div>
-          </div>
-
-          {/* Honeypot — mirrors the contact form's `botcheck` convention. Left inert until this form is wired to a real endpoint. */}
-          <label
-            htmlFor="mc-botcheck"
-            className="absolute left-[-9999px]"
-            aria-hidden="true"
+        {formEnabled ? (
+          <MasterclassRegistrationForm siteKey={turnstileSiteKey as string} />
+        ) : (
+          <form
+            noValidate
+            aria-describedby="registration-disabled-note"
+            className="border-hairline bg-surface border p-6 md:p-8"
           >
-            Leave this field empty
-            <input
-              id="mc-botcheck"
-              type="checkbox"
-              name="botcheck"
-              tabIndex={-1}
-              autoComplete="off"
-            />
-          </label>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <label htmlFor="mc-name" className={labelClass}>
+                  {registration.fields.name}
+                </label>
+                <input
+                  id="mc-name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder={registration.fields.namePlaceholder}
+                  disabled
+                  className={`${fieldClass} mt-2 disabled:cursor-not-allowed disabled:opacity-60`}
+                />
+              </div>
 
-          <button
-            type="submit"
-            disabled={!checkoutEnabled}
-            aria-disabled={!checkoutEnabled}
-            className="bg-action hover:bg-action-hover focus-visible:outline-action font-bengali mt-6 inline-flex h-13 w-full items-center justify-center gap-2 rounded-full px-7 text-[0.95rem] font-medium text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:bg-ink/40 disabled:hover:bg-ink/40"
-          >
-            {checkoutEnabled
-              ? registration.submitEnabledLabel
-              : registration.submitDisabledLabel}
-          </button>
+              <div>
+                <label htmlFor="mc-email" className={labelClass}>
+                  {registration.fields.email}
+                </label>
+                <input
+                  id="mc-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder={registration.fields.emailPlaceholder}
+                  disabled
+                  className={`${fieldClass} mt-2 disabled:cursor-not-allowed disabled:opacity-60`}
+                />
+              </div>
 
-          {!checkoutEnabled ? (
+              <div>
+                <label htmlFor="mc-phone" className={labelClass}>
+                  {registration.fields.phone}
+                </label>
+                <input
+                  id="mc-phone"
+                  name="phone"
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder={registration.fields.phonePlaceholder}
+                  disabled
+                  className={`${fieldClass} mt-2 disabled:cursor-not-allowed disabled:opacity-60`}
+                />
+              </div>
+            </div>
+
+            <div className="mt-5 space-y-4">
+              <div className="flex items-start gap-3">
+                <input
+                  id="mc-consent"
+                  name="consent"
+                  type="checkbox"
+                  required
+                  disabled
+                  className={checkboxClass}
+                />
+                <label htmlFor="mc-consent" className="text-ink font-bengali text-sm leading-relaxed">
+                  {registration.consentPrefix}{" "}
+                  <Link href={legalPageLinks[1].href} className={legalLinkClass}>
+                    {legalPageLinks[1].label}
+                  </Link>
+                  ,{" "}
+                  <Link href={legalPageLinks[0].href} className={legalLinkClass}>
+                    {legalPageLinks[0].label}
+                  </Link>{" "}
+                  {registration.consentJoiner}{" "}
+                  <Link href={legalPageLinks[2].href} className={legalLinkClass}>
+                    {legalPageLinks[2].label}
+                  </Link>{" "}
+                  {registration.consentSuffix}
+                </label>
+              </div>
+
+              {/* Separate and independently optional — never bundled with the required checkbox above. */}
+              <div className="flex items-start gap-3">
+                <input
+                  id="mc-marketing-consent"
+                  name="marketingConsent"
+                  type="checkbox"
+                  disabled
+                  className={checkboxClass}
+                />
+                <label
+                  htmlFor="mc-marketing-consent"
+                  className="text-ink-muted font-bengali text-sm leading-relaxed"
+                >
+                  {registration.marketingConsentLabel}
+                </label>
+              </div>
+            </div>
+
+            {/* Honeypot — mirrors the contact form's `botcheck` convention. Left inert until this form is wired to a real endpoint. */}
+            <label
+              htmlFor="mc-botcheck"
+              className="absolute left-[-9999px]"
+              aria-hidden="true"
+            >
+              Leave this field empty
+              <input
+                id="mc-botcheck"
+                type="checkbox"
+                name="botcheck"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </label>
+
+            <button
+              type="submit"
+              disabled
+              aria-disabled="true"
+              className="bg-action hover:bg-action-hover focus-visible:outline-action font-bengali mt-6 inline-flex h-13 w-full items-center justify-center gap-2 rounded-full px-7 text-[0.95rem] font-medium text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:bg-ink/40 disabled:hover:bg-ink/40"
+            >
+              {registration.submitDisabledLabel}
+            </button>
+
             <p
               id="registration-disabled-note"
               className="text-ink-muted font-bengali border-hairline bg-canvas mt-4 flex items-start gap-2.5 border p-4 text-xs leading-relaxed"
@@ -210,8 +234,8 @@ export function Registration() {
               />
               {registration.devNotice}
             </p>
-          ) : null}
-        </form>
+          </form>
+        )}
       </div>
     </MasterclassSection>
   );

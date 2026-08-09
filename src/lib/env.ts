@@ -1,9 +1,18 @@
+import "server-only";
+
+import { isPrivacyPolicyPublished } from "@/lib/masterclass/constants";
+
 /**
  * Server-only environment accessors. Every function throws or returns a
  * clear failure when a required variable is missing — but none of them read
  * `process.env` at module load, only when called. Importing this file (even
  * transitively, e.g. during static generation) never throws and never
  * touches MongoDB or a secret by itself.
+ *
+ * The `server-only` import above makes any accidental import from a Client
+ * Component a build-time error rather than a silent runtime bug — verified
+ * before adding it that every current importer (`route.ts`, `mongodb.ts`,
+ * `Registration.tsx`) is server-only already.
  */
 
 interface MongoEnv {
@@ -70,4 +79,23 @@ export function getSecurityEnv(): SecurityEnv | null {
   }
 
   return { turnstileSecretKey, rateLimitSecret, allowedOrigins };
+}
+
+/**
+ * The full server-controlled readiness gate for the registration form —
+ * deliberately a single boolean, never the underlying reasons. A Server
+ * Component uses this (alongside the separate, non-secret
+ * `masterclassConfig.checkoutEnabled` and a present
+ * `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, both read directly in `Registration.tsx`
+ * since neither is sensitive) to decide whether to render the interactive
+ * form at all. Bundling `getSecurityEnv()` in here means nothing outside
+ * this file ever needs to call it directly — one fewer place a future
+ * change could accidentally leak a `SecurityEnv` value toward the client.
+ *
+ * True only when all three hold: `MASTERCLASS_REGISTRATION_ENABLED`,
+ * a published privacy policy (not the `"unpublished-draft"` placeholder),
+ * and complete Turnstile/rate-limit/origin security configuration.
+ */
+export function isRegistrationOperationallyReady(): boolean {
+  return isRegistrationEnabled() && isPrivacyPolicyPublished() && getSecurityEnv() !== null;
 }
