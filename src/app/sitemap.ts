@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { legalPageLinks } from "@/data/legal-content";
 import { site } from "@/data/site";
 import { getAllPosts } from "@/lib/blog";
 
@@ -36,5 +37,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     ...posts,
+    /*
+     * Public, index/follow legal pages (Phase 3A). The masterclass sales
+     * page itself stays out of this sitemap — it's still `noindex, nofollow`
+     * until checkout is functional.
+     */
+    ...legalPageLinks.map((link) => ({
+      url: `${site.url}${link.href}`,
+      lastModified,
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
+    })),
   ];
 }

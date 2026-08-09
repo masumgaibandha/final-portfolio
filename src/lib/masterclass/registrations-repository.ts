@@ -1,7 +1,7 @@
 import type { ClientSession, Collection } from "mongodb";
 
 import { getDb } from "@/lib/mongodb";
-import { privacyPolicyVersion } from "@/lib/masterclass/constants";
+import { policyVersions } from "@/lib/masterclass/constants";
 import { RegistrationConflictError } from "@/lib/masterclass/errors";
 import { generatePublicRegistrationRef } from "@/lib/masterclass/refs";
 import type {
@@ -132,8 +132,11 @@ export async function upsertRegistration(
     phoneE164: input.phoneE164,
     status: "PENDING_PAYMENT",
     consent: {
-      termsAcceptedAt: now,
-      privacyVersion: privacyPolicyVersion,
+      accepted: true,
+      privacyPolicyVersion: policyVersions.privacy,
+      termsVersion: policyVersions.terms,
+      refundPolicyVersion: policyVersions.refund,
+      acceptedAt: now,
       marketingConsent: input.marketingConsent,
     },
     firstTouchAttribution: input.attribution,

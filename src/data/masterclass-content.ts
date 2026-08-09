@@ -260,6 +260,12 @@ export const registration = {
     phone: "মোবাইল নম্বর",
     phonePlaceholder: "01XXXXXXXXX",
   },
+  /* The three policy links are interpolated into this sentence by Registration.tsx from legalPageLinks — kept as fixed sentence glue here, not duplicated content. */
+  consentPrefix: "আমি",
+  consentJoiner: "ও",
+  consentSuffix: "মেনে নিচ্ছি।",
+  marketingConsentLabel:
+    "ভবিষ্যৎ অফার ও আপডেট সম্পর্কে ইমেইল পেতে চাই (ঐচ্ছিক)।",
   submitEnabledLabel: "এখনই ভর্তি হোন — ৳২,০০০",
   submitDisabledLabel: "পেমেন্ট সেটআপ চলছে",
   /* Shown only while checkoutEnabled is false — never in production once it flips true. */

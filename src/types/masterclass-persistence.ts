@@ -88,11 +88,23 @@ export interface DeliveryState {
   lastErrorCode: string | null;
 }
 
+/**
+ * Evidence of what a student agreed to and exactly which version of each
+ * document was in effect at that moment — added Phase 3A, no migration
+ * needed (no production registrations exist yet). `privacyPolicyVersion`,
+ * `termsVersion`, and `refundPolicyVersion` are always stamped from
+ * `policyVersions` in `src/lib/masterclass/constants.ts` at write time —
+ * never accepted from the client, and never rewritten by a later retry (see
+ * `upsertRegistration`'s doc comment). Never returned by the public API.
+ */
 export interface ConsentRecord {
-  /** Set only when `termsAccepted === true` was explicitly submitted — never inferred. */
-  termsAcceptedAt: Date;
-  privacyVersion: string;
-  /** Always a separate, explicit opt-in. Defaults to false, never true by inference. */
+  /** Always `true` — a registration document is only ever created after `termsAccepted === true` was explicitly submitted; there is no way to persist `false`. */
+  accepted: true;
+  privacyPolicyVersion: string;
+  termsVersion: string;
+  refundPolicyVersion: string;
+  acceptedAt: Date;
+  /** Always a separate, explicit opt-in, independent of `accepted`. Defaults to false, never true by inference. */
   marketingConsent: boolean;
 }
 
