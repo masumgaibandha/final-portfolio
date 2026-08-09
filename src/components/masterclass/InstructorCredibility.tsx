@@ -5,7 +5,7 @@ import {
   eyebrowClass,
   eyebrowDotClass,
 } from "@/components/masterclass/MasterclassSection";
-import { instructor } from "@/data/masterclass-content";
+import { instructor, resultsProof } from "@/data/masterclass-content";
 
 export function InstructorCredibility() {
   return (
@@ -64,6 +64,15 @@ export function InstructorCredibility() {
             <figcaption className="text-ink-muted font-bengali mt-4 text-sm leading-relaxed">
               {instructor.proof.caption}
             </figcaption>
+            <a
+              href={instructor.proof.src}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-ink hover:text-action focus-visible:outline-action decoration-action font-bengali mt-3 inline-flex min-h-11 w-fit items-center rounded-sm text-sm font-medium underline decoration-2 underline-offset-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
+            >
+              {resultsProof.viewFullSizeLabel}
+              <span className="sr-only"> (নতুন ট্যাবে খুলবে)</span>
+            </a>
           </figure>
 
           {/* Secondary, verifiable — not the primary registration CTA, so an outline style. */}

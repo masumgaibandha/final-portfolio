@@ -205,15 +205,11 @@ export const instructor = {
     caption:
       "Upwork প্রোফাইলের public পরিসংখ্যান। $100K+ figure-টি Upwork platform-এর lifetime earnings, ব্যক্তিগত income বা profit নয়।",
   },
-  /* Verifiable public profiles — kept as data so the component never hardcodes a URL. */
+  /* Verifiable public profile — kept as data so the component never hardcodes a URL. */
   profileLinks: [
     {
       label: "Upwork প্রোফাইল যাচাই করুন ↗",
       href: "https://www.upwork.com/freelancers/~01a5eccfaf40a8a065",
-    },
-    {
-      label: "Fiverr প্রোফাইল দেখুন ↗",
-      href: "https://www.fiverr.com/expertlead?public_mode=true",
     },
   ] satisfies readonly ProfileLink[],
 } as const;
