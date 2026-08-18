@@ -46,6 +46,84 @@ export default async function AdminOrdersPage({ searchParams }: AdminOrdersPageP
 
   return (
     <main style={{ fontFamily: "system-ui, sans-serif", maxWidth: 880, margin: "0 auto", padding: "2.5rem 1.25rem" }}>
+      {/*
+       * Defined once here (the page, rendered once) rather than inside
+       * OrderRow (rendered once per order) so N orders don't produce N
+       * duplicate <style> tags. Plain CSS, not Tailwind — this admin island
+       * deliberately stays dependency-free from the main site's design
+       * system (see OrderRow.tsx's own doc comment); hover/focus states
+       * need real pseudo-classes, which inline `style` objects can't
+       * express, hence a small scoped stylesheet instead of inline styles
+       * for just the interactive controls.
+       */}
+      <style>{`
+        .mc-admin-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.4rem;
+          border-radius: 8px;
+          padding: 0.6rem 1.15rem;
+          font-size: 0.9rem;
+          font-weight: 600;
+          font-family: inherit;
+          border: 1.5px solid transparent;
+          cursor: pointer;
+          transition: background-color 0.15s ease, opacity 0.15s ease;
+        }
+        .mc-admin-btn:disabled {
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+        .mc-admin-btn-approve {
+          background: #15803d;
+          color: #fff;
+        }
+        .mc-admin-btn-approve:hover:not(:disabled) {
+          background: #166534;
+        }
+        .mc-admin-btn-approve:focus-visible {
+          outline: 2px solid #15803d;
+          outline-offset: 2px;
+        }
+        .mc-admin-btn-reject {
+          background: #b91c1c;
+          color: #fff;
+        }
+        .mc-admin-btn-reject:hover:not(:disabled) {
+          background: #991b1b;
+        }
+        .mc-admin-btn-reject:focus-visible {
+          outline: 2px solid #b91c1c;
+          outline-offset: 2px;
+        }
+        .mc-admin-btn-retry {
+          background: #fff;
+          color: #92400e;
+          border-color: #d97706;
+        }
+        .mc-admin-btn-retry:hover:not(:disabled) {
+          background: #fffbeb;
+        }
+        .mc-admin-btn-retry:focus-visible {
+          outline: 2px solid #d97706;
+          outline-offset: 2px;
+        }
+        .mc-admin-input {
+          border: 1px solid #d8d8d0;
+          border-radius: 8px;
+          padding: 0.6rem 0.8rem;
+          font-size: 0.9rem;
+          font-family: inherit;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .mc-admin-input:focus-visible,
+        .mc-admin-input:focus {
+          outline: none;
+          border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+      `}</style>
       <h1 style={{ fontSize: "1.4rem", marginBottom: "0.3rem" }}>Masterclass — payments awaiting review</h1>
       <p style={{ color: "#666", marginBottom: "1.5rem", fontSize: "0.9rem" }}>
         Oldest submissions first. Approving sets the order to PAID, enrolls the student, and (best-effort) sends
