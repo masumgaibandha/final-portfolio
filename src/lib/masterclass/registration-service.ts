@@ -84,7 +84,8 @@ export async function registerForMasterclass(
           registrationId: registration._id,
           masterclassSlug: constants.masterclassSlug,
           batchId: constants.batchId,
-          amount: constants.amount,
+          /* The price actually charged right now — never recomputed from a later price change. */
+          amount: constants.resolvePriceBDT(),
           currency: constants.currency,
           idempotencyKey,
           attribution,

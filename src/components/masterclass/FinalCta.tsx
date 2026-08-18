@@ -2,8 +2,13 @@ import { LuArrowRight } from "react-icons/lu";
 
 import { Container } from "@/components/ui/Container";
 import { finalCta } from "@/data/masterclass-content";
+import { formatBDT } from "@/lib/masterclass/format";
 
-export function FinalCta() {
+interface FinalCtaProps {
+  priceBDT: number;
+}
+
+export function FinalCta({ priceBDT }: FinalCtaProps) {
   return (
     <section aria-labelledby="final-cta-heading" className="bg-ink text-on-dark py-14 md:py-20">
       <Container>
@@ -21,7 +26,7 @@ export function FinalCta() {
             href="#registration"
             className="bg-action-dark text-ink hover:brightness-110 focus-visible:outline-action-dark font-bengali mt-8 inline-flex h-13 items-center gap-2 rounded-full px-7 text-[0.95rem] font-medium transition-[filter] focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            {finalCta.cta}
+            {finalCta.ctaLabel} — {formatBDT(priceBDT)}
             <LuArrowRight className="size-4" aria-hidden="true" />
           </a>
         </div>

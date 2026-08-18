@@ -90,6 +90,32 @@ export const idempotencyKeySchema = z
   .string()
   .uuid("Idempotency-Key must be a valid UUID.");
 
+/**
+ * Step 2 of registration: choosing a manual payment method and submitting
+ * evidence. `amount`/`currency` are deliberately absent from this schema —
+ * the server always uses the price already stored on the order at creation
+ * time (see `resolvePriceBDT()`), never a client-submitted figure.
+ */
+export const manualPaymentInputSchema = z.object({
+  method: z.enum(["BKASH", "NAGAD", "ROCKET"], "Choose a valid payment method."),
+  /* Bangladeshi mobile number the payment was sent *from* — same shape as the registration phone, but a separate value (often a different person's number, e.g. a parent's or shop's bKash account). */
+  senderNumber: z
+    .string()
+    .trim()
+    .max(20, "Sender number is too long.")
+    .refine(
+      (value) => normalizeBangladeshPhone(value) !== null,
+      "Enter a valid Bangladeshi mobile number.",
+    ),
+  transactionId: z
+    .string()
+    .trim()
+    .min(4, "Transaction ID looks too short.")
+    .max(50, "Transaction ID is too long."),
+});
+
+export type ManualPaymentInput = z.infer<typeof manualPaymentInputSchema>;
+
 /** Generic — never echoes the field's submitted value, only which field and why. */
 export interface ValidationFailure {
   field: string;

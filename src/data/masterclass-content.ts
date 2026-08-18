@@ -1,6 +1,7 @@
 import type {
   CurriculumDay,
   FaqItem,
+  ManualPaymentMethodCopy,
   MasterclassConfig,
   OfferDetail,
   ProfileLink,
@@ -10,16 +11,14 @@ import type {
 } from "@/types/masterclass";
 
 /*
- * Phase 1 (this file) is UI-only. `checkoutEnabled: false` is what disables the
- * registration form's submit button — flip it only once SSLCommerz session
- * initiation and order validation actually exist server-side.
+ * `checkoutEnabled: true` — a real payment path exists now (manual
+ * bKash/Nagad/Rocket, verified by an operator; see `Registration.tsx` and
+ * `src/lib/masterclass/verify-service.ts`). Price, dates, and batch identity
+ * live in `src/lib/masterclass/constants.ts` — the server-only source of
+ * truth this file's copy is written to describe, never to duplicate.
  */
 export const masterclassConfig: MasterclassConfig = {
-  masterclassId: "lead-generation-cold-email",
-  batchId: "2026-10-02",
-  priceBDT: 2000,
-  currency: "BDT",
-  checkoutEnabled: false,
+  checkoutEnabled: true,
 };
 
 export const masterclassMeta = {
@@ -41,12 +40,14 @@ export const hero = {
     "১১ বছরের বাস্তব অভিজ্ঞতা এবং আন্তর্জাতিক ক্লায়েন্টদের সঙ্গে কাজের বাস্তব workflow থেকে শিখুন B2B Lead Generation, prospect list building, cold email infrastructure ও campaign setup।",
   credibilityLine:
     "Top Rated Upwork Freelancer • $100K+ Earnings • ২৪৪টি কাজ • ২২,৩০২+ ঘণ্টা",
-  primaryCta: "এখনই ভর্তি হোন — ৳২,০০০",
+  /* No embedded price — components append `formatBDT(resolvePriceBDT())` after this label, so the number is never re-typed here. */
+  primaryCtaLabel: "এখনই ভর্তি হোন",
   secondaryCta: "কী কী শিখবেন দেখুন",
   instructorImageAlt:
     "আব্দুল্লাহ আল মাসুম, Cold Email Outreach ও Lead Generation বিশেষজ্ঞ",
 } as const;
 
+/* Dates/time here must match `classDates` in `src/lib/masterclass/constants.ts` (Oct 2–3 2026, 9pm) — that object is the source of truth; this is the Bengali-copy restatement of it. */
 export const offerDetails: readonly OfferDetail[] = [
   { label: "২ ও ৩ অক্টোবর ২০২৬" },
   { label: "প্রতিদিন রাত ৯টা" },
@@ -241,13 +242,15 @@ export const registration = {
   label: "রেজিস্ট্রেশন",
   heading: "আপনার সিট নিশ্চিত করুন",
   description:
-    "নিচের ফর্মটি পূরণ করে রেজিস্ট্রেশন প্রক্রিয়া সম্পর্কে ধারণা নিন। Secure payment integration সম্পন্ন হওয়ার পর রেজিস্ট্রেশন উন্মুক্ত করা হবে।",
+    "নাম, ইমেইল ও মোবাইল নম্বর দিয়ে রেজিস্ট্রেশন করুন, এরপর bKash/Nagad/Rocket-এর যেকোনো একটি দিয়ে পেমেন্ট সম্পন্ন করুন।",
   priceLabel: "কোর্স ফি",
-  priceValue: "৳২,০০০",
+  /* No embedded price string — Registration.tsx renders formatBDT(priceBDT), with a small "নিয়মিত মূল্য" note when the current price is the early-bird one. */
+  earlyBirdLabel: "Early Bird",
+  regularPricePrefix: "নিয়মিত মূল্য",
   dateLabel: "ক্লাসের তারিখ",
   dateValue: "২ ও ৩ অক্টোবর ২০২৬, প্রতিদিন রাত ৯টা",
   paymentNote:
-    "SSLCommerz-এর নিরাপদ payment page-এর মাধ্যমে উপলভ্য mobile banking ও card ব্যবহার করে payment করা যাবে।",
+    "রেজিস্ট্রেশনের পর bKash, Nagad বা Rocket-এ ম্যানুয়ালি পেমেন্ট পাঠিয়ে Transaction ID জমা দিন। আমরা যাচাই করার পর ইমেইলে কনফার্মেশন পাঠাবো।",
   fields: {
     name: "পুরো নাম",
     namePlaceholder: "আপনার নাম লিখুন",
@@ -256,24 +259,38 @@ export const registration = {
     phone: "মোবাইল নম্বর",
     phonePlaceholder: "01XXXXXXXXX",
   },
-  /* The three policy links are interpolated into this sentence by Registration.tsx from legalPageLinks — kept as fixed sentence glue here, not duplicated content. */
+  /* The three policy links are interpolated into this sentence by the form from legalPageLinks — kept as fixed sentence glue here, not duplicated content. */
   consentPrefix: "আমি",
   consentJoiner: "ও",
   consentSuffix: "মেনে নিচ্ছি।",
   marketingConsentLabel:
     "ভবিষ্যৎ অফার ও আপডেট সম্পর্কে ইমেইল পেতে চাই (ঐচ্ছিক)।",
-  submitEnabledLabel: "এখনই ভর্তি হোন — ৳২,০০০",
+  submitEnabledLabel: "এখনই ভর্তি হোন",
   submitDisabledLabel: "পেমেন্ট সেটআপ চলছে",
-  /* Shown only while checkoutEnabled is false — never in production once it flips true. */
+  /* Shown only while checkoutEnabled is false. */
   devNotice:
-    "Development note: Secure payment integration (SSLCommerz) এখনও সংযুক্ত করা হয়নি। এই ফর্মটি বর্তমানে শুধু preview হিসেবে দেখানো হচ্ছে; জমা দেওয়া সম্ভব নয়।",
+    "Development note: রেজিস্ট্রেশন সিস্টেম এখনও সম্পূর্ণভাবে সংযুক্ত হয়নি। এই ফর্মটি বর্তমানে শুধু preview হিসেবে দেখানো হচ্ছে; জমা দেওয়া সম্ভব নয়।",
+} as const;
+
+/** Bengali labels/instructions per manual channel — numbers themselves come from env (`getManualPaymentEnv()`), never hardcoded here. */
+export const paymentMethods: Record<"BKASH" | "NAGAD" | "ROCKET", ManualPaymentMethodCopy> = {
+  BKASH: {
+    label: "bKash",
+    instructions: "Send Money অপশন ব্যবহার করে নিচের নম্বরে টাকা পাঠান।",
+  },
+  NAGAD: {
+    label: "Nagad",
+    instructions: "Send Money অপশন ব্যবহার করে নিচের নম্বরে টাকা পাঠান।",
+  },
+  ROCKET: {
+    label: "Rocket",
+    instructions: "Send Money অপশন ব্যবহার করে নিচের নম্বরে টাকা পাঠান।",
+  },
 } as const;
 
 /*
  * Only rendered by MasterclassRegistrationForm.tsx, which itself only
- * mounts when `formEnabled` is true — see Registration.tsx. Under the
- * current configuration this copy is unused, but it's written now so the
- * interactive form is complete and correct for when the gates open.
+ * mounts when `formEnabled` is true — see Registration.tsx.
  */
 export const registrationForm = {
   loadingLabel: "জমা হচ্ছে...",
@@ -285,11 +302,8 @@ export const registrationForm = {
   turnstileMissingError: "অনুগ্রহ করে যাচাইকরণ সম্পন্ন করুন।",
   turnstileExpiredError: "যাচাইকরণের মেয়াদ শেষ হয়ে গেছে। অনুগ্রহ করে আবার যাচাই করুন।",
   turnstileWidgetError: "যাচাইকরণ লোড করা যায়নি। অনুগ্রহ করে পেজ রিফ্রেশ করে আবার চেষ্টা করুন।",
-  successHeading: "তথ্য গৃহীত হয়েছে",
-  successBody:
-    "আপনার রেজিস্ট্রেশন তথ্য গৃহীত হয়েছে। Payment gateway এখনও সংযুক্ত করা হয়নি—সংযুক্ত হওয়ার পর পরবর্তী ধাপ আপনার ইমেইলে জানানো হবে।",
   genericError:
-    "দুঃখিত, রেজিস্ট্রেশন সম্পন্ন করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন, অথবা masum@masumdev.com-এ যোগাযোগ করুন।",
+    "দুঃখিত, অনুরোধটি সম্পন্ন করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন, অথবা masum@masumdev.com-এ যোগাযোগ করুন।",
   /* REGISTRATION_CONFLICT — the submitted email is already registered under a different phone number. Rotating the idempotency key would not fix this, so the message asks for a data correction or direct contact instead of "try again." */
   registrationConflictError:
     "এই ইমেইল দিয়ে ভিন্ন তথ্যসহ ইতিমধ্যে একটি রেজিস্ট্রেশন আছে। অনুগ্রহ করে আপনার ইমেইল ও মোবাইল নম্বর যাচাই করুন, অথবা masum@masumdev.com-এ যোগাযোগ করুন।",
@@ -300,6 +314,34 @@ export const registrationForm = {
   networkError: "নেটওয়ার্ক সমস্যার কারণে অনুরোধ পাঠানো যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
   rateLimitedPrefix: "অনুরোধের সীমা অতিক্রম হয়েছে। অনুগ্রহ করে",
   rateLimitedSuffix: "সেকেন্ড পর আবার চেষ্টা করুন।",
+
+  /* Step 2 — choosing a method + entering payment evidence. */
+  paymentStepHeading: "পেমেন্ট মাধ্যম বেছে নিন",
+  paymentStepDescription: "নিচের যেকোনো একটি মাধ্যমে টাকা পাঠিয়ে Sender Number ও Transaction ID জমা দিন।",
+  amountLabel: "পাঠাতে হবে",
+  accountNumberLabel: "নম্বর",
+  copyLabel: "কপি করুন",
+  copiedLabel: "কপি হয়েছে",
+  senderNumberLabel: "যে নম্বর থেকে পাঠিয়েছেন",
+  senderNumberPlaceholder: "01XXXXXXXXX",
+  senderNumberError: "অনুগ্রহ করে সঠিক বাংলাদেশি মোবাইল নম্বর লিখুন।",
+  transactionIdLabel: "Transaction ID",
+  transactionIdPlaceholder: "যেমন 9G7H2K1XYZ",
+  transactionIdError: "Transaction ID সঠিকভাবে লিখুন (কমপক্ষে ৪ অক্ষর)।",
+  paymentMethodError: "অনুগ্রহ করে একটি পেমেন্ট মাধ্যম বেছে নিন।",
+  submitPaymentLabel: "পেমেন্ট তথ্য জমা দিন",
+  changeMethodLabel: "মাধ্যম পরিবর্তন করুন",
+  /* DUPLICATE_TRANSACTION_ID — this exact TxID is already recorded against another order. */
+  duplicateTransactionError:
+    "এই Transaction ID ইতিমধ্যে অন্য একটি রেজিস্ট্রেশনে ব্যবহৃত হয়েছে। অনুগ্রহ করে আইডিটি আবার যাচাই করুন, অথবা masum@masumdev.com-এ যোগাযোগ করুন।",
+  orderNotEditableError:
+    "এই রেজিস্ট্রেশনের পেমেন্ট ইতিমধ্যে প্রক্রিয়া করা হয়েছে। প্রশ্ন থাকলে masum@masumdev.com-এ যোগাযোগ করুন।",
+
+  /* Step 3 — pending verification. Deliberately never says "registration confirmed." */
+  pendingHeading: "পেমেন্ট তথ্য জমা হয়েছে",
+  pendingBody:
+    "আপনার পেমেন্ট এখন যাচাই করা হচ্ছে। যাচাই সম্পন্ন হওয়ার পর আপনার রেজিস্ট্রেশন কনফার্মেশন ইমেইলে পাঠানো হবে। লাইভ ক্লাসের লিংক ক্লাস শুরুর আগে আলাদাভাবে পাঠানো হবে।",
+  pendingRegistrationRefLabel: "রেজিস্ট্রেশন আইডি",
 } as const;
 
 export const faqItems: readonly FaqItem[] = [
@@ -349,13 +391,25 @@ export const faqItems: readonly FaqItem[] = [
     question: "ক্লাসে প্রশ্ন করার সুযোগ থাকবে কি?",
     answer: "হ্যাঁ, প্রতিদিনের ক্লাসের শেষে একটি লাইভ প্রশ্নোত্তর পর্ব থাকবে।",
   },
+  {
+    id: "live-link-delivery",
+    question: "লাইভ ক্লাসের লিংক কীভাবে পাবো?",
+    answer:
+      "পেমেন্ট যাচাই সম্পন্ন হওয়ার পর আপনি একটি কনফার্মেশন ইমেইল পাবেন। লাইভ ক্লাসে যোগ দেওয়ার লিংক ক্লাস শুরুর আগে আলাদা ইমেইলে পাঠানো হবে—তাই রেজিস্ট্রেশনের সময় সঠিক ইমেইল ঠিকানা দেওয়া নিশ্চিত করুন।",
+  },
+  {
+    id: "mobile-join",
+    question: "মোবাইল দিয়ে কি ক্লাসে যোগ দেওয়া যাবে?",
+    answer: "হ্যাঁ। Zoom app ইনস্টল করা যেকোনো স্মার্টফোন থেকেই লাইভ ক্লাসে যোগ দেওয়া যাবে।",
+  },
 ];
 
 export const finalCta = {
   heading: "সঠিক foundation দিয়ে শুরু করুন",
   description:
     "কোনো shortcut নয়—একটি বাস্তব workflow শিখুন, যা দিয়ে আপনি নিজে চর্চা করে এগিয়ে যেতে পারবেন।",
-  cta: "এখনই ভর্তি হোন — ৳২,০০০",
+  /* No embedded price — FinalCta.tsx appends formatBDT(priceBDT). */
+  ctaLabel: "এখনই ভর্তি হোন",
 } as const;
 
 export const footer = {
@@ -364,7 +418,7 @@ export const footer = {
   backToPortfolio: "মূল পোর্টফোলিওতে ফিরে যান",
 } as const;
 
+/* No embedded price — StickyMobileCta.tsx appends formatBDT(priceBDT). */
 export const stickyCta = {
-  price: "৳২,০০০",
   label: "ভর্তি হোন",
 } as const;

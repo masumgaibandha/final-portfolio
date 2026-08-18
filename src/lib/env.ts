@@ -81,6 +81,66 @@ export function getSecurityEnv(): SecurityEnv | null {
   return { turnstileSecretKey, rateLimitSecret, allowedOrigins };
 }
 
+export interface ManualPaymentMethodEnv {
+  enabled: boolean;
+  number: string | null;
+}
+
+export interface ManualPaymentEnv {
+  bkash: ManualPaymentMethodEnv;
+  nagad: ManualPaymentMethodEnv;
+  rocket: ManualPaymentMethodEnv;
+}
+
+/**
+ * Per-method: `enabled` only when its payment number is actually configured.
+ * Never throws — an unconfigured method is simply hidden from the payment
+ * picker rather than presenting a broken flow. Numbers are read lazily here,
+ * not cached at module load, matching every other accessor in this file.
+ */
+export function getManualPaymentEnv(): ManualPaymentEnv {
+  const bkash = process.env.MASTERCLASS_BKASH_NUMBER?.trim() || null;
+  const nagad = process.env.MASTERCLASS_NAGAD_NUMBER?.trim() || null;
+  const rocket = process.env.MASTERCLASS_ROCKET_NUMBER?.trim() || null;
+
+  return {
+    bkash: { enabled: bkash !== null, number: bkash },
+    nagad: { enabled: nagad !== null, number: nagad },
+    rocket: { enabled: rocket !== null, number: rocket },
+  };
+}
+
+export interface AdminAuthEnv {
+  username: string;
+  password: string;
+}
+
+/** `null` if either credential is missing — the admin route fails closed (see `middleware.ts`), never with a default credential. */
+export function getAdminAuthEnv(): AdminAuthEnv | null {
+  const username = process.env.MASTERCLASS_ADMIN_USER;
+  const password = process.env.MASTERCLASS_ADMIN_PASSWORD;
+  if (!username || !password) return null;
+  return { username, password };
+}
+
+export interface MetaEnv {
+  pixelId: string;
+  capiAccessToken: string;
+}
+
+/**
+ * Server-side Conversions API config — `null` if either half is missing.
+ * Distinct from `NEXT_PUBLIC_META_PIXEL_ID`, which is public by design (the
+ * browser Pixel ID) and read directly where needed; `capiAccessToken` must
+ * never reach a Client Component.
+ */
+export function getMetaCapiEnv(): MetaEnv | null {
+  const pixelId = process.env.META_PIXEL_ID;
+  const capiAccessToken = process.env.META_CAPI_ACCESS_TOKEN;
+  if (!pixelId || !capiAccessToken) return null;
+  return { pixelId, capiAccessToken };
+}
+
 /**
  * The full server-controlled readiness gate for the registration form —
  * deliberately a single boolean, never the underlying reasons. A Server

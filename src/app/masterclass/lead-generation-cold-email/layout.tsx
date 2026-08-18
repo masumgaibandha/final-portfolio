@@ -22,11 +22,11 @@ export const metadata: Metadata = {
   description: masterclassMeta.metaDescription,
   alternates: { canonical: "/masterclass/lead-generation-cold-email" },
   /*
-   * Not open for public registration yet — checkout is disabled (Phase 1 is
-   * UI-only). Keep this out of search results and off-limits to crawlers
-   * following links to it until Phase 2 ships a working checkout.
+   * Registration is open (manual bKash/Nagad/Rocket, verified by an
+   * operator) — indexable now. `robots` is omitted rather than set
+   * explicitly, so this inherits the root layout's default
+   * `{ index: true, follow: true }` rather than duplicating it here.
    */
-  robots: { index: false, follow: false },
   openGraph: {
     type: "website",
     url: "/masterclass/lead-generation-cold-email",

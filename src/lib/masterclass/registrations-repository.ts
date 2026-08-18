@@ -2,8 +2,8 @@ import type { ClientSession, Collection } from "mongodb";
 
 import { getDb } from "@/lib/mongodb";
 import { policyVersions } from "@/lib/masterclass/constants";
+import { generateHumanRegistrationRef } from "@/lib/masterclass/counters-repository";
 import { RegistrationConflictError } from "@/lib/masterclass/errors";
-import { generatePublicRegistrationRef } from "@/lib/masterclass/refs";
 import type {
   AttributionSnapshot,
   RegistrationDocument,
@@ -121,8 +121,17 @@ export async function upsertRegistration(
     return applyMatchedRetry(collection, existing, input.attribution, session);
   }
 
+  /*
+   * Generated inside the same transaction (`session`) as the insert below —
+   * if the transaction later aborts (e.g. a concurrent request wins the
+   * insert race and this one turns out to be a conflict), the counter
+   * increment rolls back with it, so a rejected attempt never burns a
+   * sequence number.
+   */
+  const publicRegistrationRef = await generateHumanRegistrationRef(now, session);
+
   const doc: RegistrationDocument = {
-    publicRegistrationRef: generatePublicRegistrationRef(),
+    publicRegistrationRef,
     masterclassSlug: input.masterclassSlug,
     batchId: input.batchId,
     name: input.name,
@@ -170,4 +179,22 @@ export async function findRegistrationByPublicRef(
 ): Promise<RegistrationDocument | null> {
   const collection = await getCollection();
   return collection.findOne({ publicRegistrationRef });
+}
+
+export async function findRegistrationById(
+  registrationId: RegistrationDocument["_id"],
+): Promise<RegistrationDocument | null> {
+  const collection = await getCollection();
+  return collection.findOne({ _id: registrationId });
+}
+
+/** Called only from `verify-service.ts` immediately after an order reaches `PAID`. */
+export async function markRegistrationEnrolled(
+  registrationId: RegistrationDocument["_id"],
+): Promise<void> {
+  const collection = await getCollection();
+  await collection.updateOne(
+    { _id: registrationId },
+    { $set: { status: "ENROLLED", updatedAt: new Date() } },
+  );
 }
