@@ -3,12 +3,17 @@ import { LuArrowDown, LuArrowRight } from "react-icons/lu";
 
 import { Container } from "@/components/ui/Container";
 import { hero, offerDetails } from "@/data/masterclass-content";
+import { formatBDT } from "@/lib/masterclass/format";
+
+interface HeroProps {
+  priceBDT: number;
+}
 
 /**
  * The page's only `<h1>`. No countdown, no scarcity messaging — the offer
  * details are plain logistics (dates/time/format), not urgency devices.
  */
-export function Hero() {
+export function Hero({ priceBDT }: HeroProps) {
   return (
     <section aria-labelledby="masterclass-hero-heading" className="relative">
       <div
@@ -50,7 +55,7 @@ export function Hero() {
                 href="#registration"
                 className="bg-action hover:bg-action-hover focus-visible:outline-action inline-flex h-13 items-center gap-2 rounded-full px-7 text-[0.95rem] font-medium text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
               >
-                {hero.primaryCta}
+                {hero.primaryCtaLabel} — {formatBDT(priceBDT)}
                 <LuArrowRight className="size-4" aria-hidden="true" />
               </a>
               <a

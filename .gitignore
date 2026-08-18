@@ -34,7 +34,9 @@ yarn-error.log*
 # The blanket rule would also swallow the template, so it is re-included.
 .env
 .env.*
+.env.local
 !.env.example
+
 
 # vercel
 .vercel

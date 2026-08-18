@@ -8,17 +8,29 @@ import type { ObjectId } from "mongodb";
 
 export type RegistrationStatus = "PENDING_PAYMENT" | "ENROLLED" | "CANCELLED";
 
+/**
+ * `PENDING` — order created, no manual payment submitted yet.
+ * `REVIEW` — student submitted sender number + transaction ID; awaiting manual verification.
+ * `PAID` — an operator manually verified the money was actually received. Only
+ * `verifyPayment()` in `payment-orders-repository.ts` may set this.
+ * `REJECTED` — a submitted transaction could not be verified.
+ * `FAILED`/`REFUNDED` — reserved for a future real gateway and the published refund policy;
+ * unused by the Batch 1 manual flow.
+ */
 export type PaymentOrderStatus =
-  | "CREATED"
   | "PENDING"
+  | "REVIEW"
   | "PAID"
+  | "REJECTED"
   | "FAILED"
   | "CANCELLED"
-  | "REVIEW"
   | "REFUNDED";
 
-/** No gateway is wired yet — every order is created `UNASSIGNED`. */
-export type PaymentProvider = "UNASSIGNED" | "PORTPOS" | "SHURJOPAY" | "SSLCOMMERZ";
+/** `UNASSIGNED` until a payment method is chosen. `MANUAL` is the only one used in Batch 1. */
+export type PaymentProvider = "UNASSIGNED" | "MANUAL" | "SSLCOMMERZ" | "BKASH";
+
+/** Which manual channel a `MANUAL`-provider order was paid through. */
+export type ManualPaymentMethod = "BKASH" | "NAGAD" | "ROCKET";
 
 /**
  * Whitelisted attribution only — never an arbitrary object. `capturedAt` is
@@ -116,7 +128,14 @@ export interface ConsentRecord {
  */
 export interface RegistrationDocument {
   _id?: ObjectId;
-  /** Public, unguessable identifier — the `_id` is never exposed outside the database layer. */
+  /**
+   * Human-friendly, sequential identifier (`MC-2026-000123` — see
+   * `generateHumanRegistrationRef()` in `counters-repository.ts`), shown to
+   * the student and to the admin verification page. Unlike `PaymentOrderDocument.publicOrderRef`,
+   * this is *not* used as a bearer capability anywhere (it's sequential, so
+   * it's guessable by design) — the payment-submission route is keyed by
+   * the order's opaque `ord_<uuid>` ref instead.
+   */
   publicRegistrationRef: string;
   masterclassSlug: string;
   batchId: string;
@@ -137,9 +156,23 @@ export interface RegistrationDocument {
 }
 
 /**
+ * Evidence submitted by the student for a manual (bKash/Nagad/Rocket) payment.
+ * Never auto-verified — submitting this only moves an order to `REVIEW`.
+ */
+export interface ManualPaymentSubmission {
+  senderNumber: string;
+  /** As typed by the student — display form. */
+  transactionIdRaw: string;
+  /** Trimmed + uppercased — the form uniqueness is enforced on. */
+  transactionIdNormalized: string;
+  submittedAt: Date;
+}
+
+/**
  * One document per checkout/payment attempt. Never trust `status` alone as
  * proof of payment when a gateway is wired up later — only a verified
- * provider response may set it to `PAID`.
+ * provider response (or, for Batch 1, an operator via `verifyPayment()`) may
+ * ever set it to `PAID`.
  */
 export interface PaymentOrderDocument {
   _id?: ObjectId;
@@ -148,10 +181,15 @@ export interface PaymentOrderDocument {
   registrationId: ObjectId;
   masterclassSlug: string;
   batchId: string;
+  /** The price actually charged at order-creation time — never recomputed from the current masterclass price later. */
   amount: number;
   currency: string;
   status: PaymentOrderStatus;
   provider: PaymentProvider;
+  /** Which manual channel — only meaningful once `provider === "MANUAL"` and a method has been chosen. */
+  method: ManualPaymentMethod | null;
+  /** Set once the student submits sender number + transaction ID; null until then. */
+  manualPayment: ManualPaymentSubmission | null;
   /** Client-supplied UUID (the `Idempotency-Key` header) — a repeat within the same batch returns the existing order, but only if `requestFingerprint` also matches. */
   idempotencyKey: string;
   /** SHA-256 of the canonical (batchId, registrationId, amount, currency) tuple — see `src/lib/masterclass/fingerprint.ts`. A key reused for a different request is a conflict, not a replay. */
@@ -159,7 +197,7 @@ export interface PaymentOrderDocument {
   providerTransactionId: string | null;
   providerPaymentId: string | null;
   attribution: AttributionSnapshot;
-  /** Server-derived only — never taken from the request body. Reserved for future Meta CAPI use. */
+  /** Server-derived only — never taken from the request body. Used for Meta CAPI. */
   clientContext: {
     clientIpAddress: string | null;
     clientUserAgent: string | null;
@@ -171,6 +209,12 @@ export interface PaymentOrderDocument {
   };
   confirmationEmail: DeliveryState;
   purchaseCapi: DeliveryState;
+  /** Set only by `verifyPayment()`, alongside `status: "PAID"`. */
+  verifiedAt: Date | null;
+  /** Opaque operator identifier (the Basic Auth username) — never a display name, never emailed. */
+  verifiedBy: string | null;
+  /** Set only by `rejectPayment()`, alongside `status: "REJECTED"`. */
+  rejectedReason: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -9,7 +9,8 @@ import {
 } from "@/components/masterclass/MasterclassSection";
 import { legalPageLinks } from "@/data/legal-content";
 import { masterclassConfig, registration } from "@/data/masterclass-content";
-import { isRegistrationOperationallyReady } from "@/lib/env";
+import { getManualPaymentEnv, isRegistrationOperationallyReady } from "@/lib/env";
+import { formatBDT } from "@/lib/masterclass/format";
 
 const fieldClass =
   "border-hairline bg-canvas text-ink placeholder:text-ink-muted/70 focus-visible:border-ink focus-visible:outline-action w-full rounded-lg border px-4 py-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
@@ -27,8 +28,9 @@ const checkboxClass =
  * server-side, from five independent signals — never a single flag, and
  * never a `NEXT_PUBLIC_` mirror of any server-only value:
  *
- * 1. `masterclassConfig.checkoutEnabled` (content/config flag — stays
- *    `false` until a payment gateway exists; not touched by this phase).
+ * 1. `masterclassConfig.checkoutEnabled` (content/config flag — now `true`:
+ *    a real payment path exists, manual bKash/Nagad/Rocket, verified by an
+ *    operator via `/masterclass/admin/orders`).
  * 2. `MASTERCLASS_REGISTRATION_ENABLED`.
  * 3. A published privacy policy (not the `"unpublished-draft"` placeholder).
  * 4. Complete Turnstile/rate-limit/origin security configuration
@@ -43,14 +45,21 @@ const checkboxClass =
  * fully-disabled form below — and even then, only `formEnabled` (a boolean)
  * and the already-public site key ever reach that component; no readiness
  * detail, secret, or `SecurityEnv` value crosses the server/client
- * boundary. Under the current configuration `formEnabled` is `false`, so
- * that component — and therefore the Turnstile script, the widget, and any
- * `fetch` call — never enters the render tree at all.
+ * boundary. If any one signal is missing (e.g. Vercel's production env is
+ * misconfigured), this fails back to the exact same static disabled form —
+ * never a half-working checkout.
  */
-export function Registration() {
+interface RegistrationProps {
+  priceBDT: number;
+  isEarlyBird: boolean;
+  regularPriceBDT: number;
+}
+
+export function Registration({ priceBDT, isEarlyBird, regularPriceBDT }: RegistrationProps) {
   const { checkoutEnabled } = masterclassConfig;
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const formEnabled = checkoutEnabled && isRegistrationOperationallyReady() && Boolean(turnstileSiteKey);
+  const paymentMethods = getManualPaymentEnv();
 
   return (
     <MasterclassSection id="registration" labelledBy="registration-heading">
@@ -72,12 +81,17 @@ export function Registration() {
         <div className="border-hairline bg-surface h-fit border p-6 md:p-8">
           <dl className="space-y-5">
             <div>
-              <dt className="text-ink-muted font-bengali text-xs font-semibold tracking-[0.12em] uppercase">
-                {registration.priceLabel}
+              <dt className="text-ink-muted font-bengali flex items-center gap-2 text-xs font-semibold tracking-[0.12em] uppercase">
+                {isEarlyBird ? registration.earlyBirdLabel : registration.priceLabel}
               </dt>
               <dd className="font-heading text-ink mt-1.5 text-3xl tracking-tight">
-                {registration.priceValue}
+                {formatBDT(priceBDT)}
               </dd>
+              {isEarlyBird ? (
+                <p className="text-ink-muted font-bengali mt-1 text-xs">
+                  {registration.regularPricePrefix} {formatBDT(regularPriceBDT)}
+                </p>
+              ) : null}
             </div>
             <div className="border-hairline border-t pt-5">
               <dt className="text-ink-muted font-bengali flex items-center gap-2 text-xs font-semibold tracking-[0.12em] uppercase">
@@ -100,7 +114,11 @@ export function Registration() {
         </div>
 
         {formEnabled ? (
-          <MasterclassRegistrationForm siteKey={turnstileSiteKey as string} />
+          <MasterclassRegistrationForm
+            siteKey={turnstileSiteKey as string}
+            priceBDT={priceBDT}
+            paymentMethods={paymentMethods}
+          />
         ) : (
           <form
             noValidate

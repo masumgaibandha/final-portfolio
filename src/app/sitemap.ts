@@ -30,6 +30,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    /*
+     * Registration is open (manual bKash/Nagad/Rocket, admin-verified) — the
+     * sales page is now indexable and belongs in the sitemap. The admin
+     * review queue under /masterclass/admin/** stays out of both the
+     * sitemap and search results (noindex + Basic Auth).
+     */
+    {
+      url: `${site.url}/masterclass/lead-generation-cold-email`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
     {
       url: `${site.url}/blog`,
       lastModified,

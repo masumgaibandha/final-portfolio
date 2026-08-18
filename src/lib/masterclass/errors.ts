@@ -19,3 +19,19 @@ export class IdempotencyConflictError extends Error {
     this.name = "IdempotencyConflictError";
   }
 }
+
+/** The submitted transaction ID (normalized) is already recorded against a different order. */
+export class DuplicateTransactionError extends Error {
+  constructor() {
+    super("This transaction ID is already recorded against another order.");
+    this.name = "DuplicateTransactionError";
+  }
+}
+
+/** The order exists but is no longer in a state that accepts a manual-payment submission (already PAID/REJECTED/CANCELLED). */
+export class OrderNotEditableError extends Error {
+  constructor() {
+    super("This order is no longer accepting payment submissions.");
+    this.name = "OrderNotEditableError";
+  }
+}

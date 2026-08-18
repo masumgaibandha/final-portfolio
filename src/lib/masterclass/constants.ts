@@ -7,8 +7,36 @@
  */
 export const masterclassSlug = "lead-generation-cold-email";
 export const batchId = "lead-generation-cold-email-2026-10";
-export const amount = 2000;
 export const currency = "BDT";
+
+/**
+ * Batch 1 pricing. `earlyBirdEndsAt` is `null` by design — there is no real
+ * cutoff yet, and the product deliberately never shows a countdown for a
+ * deadline that doesn't exist. When a real cutoff is decided, set it here
+ * (and only here) and `resolvePriceBDT()` starts honoring it automatically.
+ */
+export const earlyBirdPriceBDT = 1499;
+export const regularPriceBDT = 1999;
+export const earlyBirdEndsAt: Date | null = null;
+
+/** No hard registration cutoff yet — `null` means registration stays open until manually disabled. */
+export const registrationEndsAt: Date | null = null;
+
+/** Both live-class sessions, for copy and (later) any date-gated logic. */
+export const classDates = {
+  day1: new Date("2026-10-02T21:00:00+06:00"),
+  day2: new Date("2026-10-03T21:00:00+06:00"),
+} as const;
+
+/**
+ * The one place "what does this student pay right now" is decided. Every
+ * order stores the number this returns *at order-creation time* — never
+ * recomputed later from whatever the current price happens to be.
+ */
+export function resolvePriceBDT(now: Date = new Date()): number {
+  if (earlyBirdEndsAt && now >= earlyBirdEndsAt) return regularPriceBDT;
+  return earlyBirdPriceBDT;
+}
 
 /**
  * One centralized, immutable version per legal document. Bump the relevant
@@ -23,7 +51,10 @@ export const currency = "BDT";
  * one, and the client must never be trusted to supply one.
  */
 export const policyVersions = {
-  privacy: "2026-08-09",
+  /* Bumped 2026-08-18: privacy policy now discloses Turnstile (already live)
+     and Meta Pixel/Conversions API (going live in this change) — see
+     `src/data/legal-content.ts` §12. */
+  privacy: "2026-08-18",
   terms: "2026-08-09",
   refund: "2026-08-09",
 } as const;
