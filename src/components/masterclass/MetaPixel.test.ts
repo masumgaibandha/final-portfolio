@@ -32,5 +32,14 @@ describe("MetaPixel", () => {
     /* Purchase is CAPI-only in this project — see meta-capi.ts. The browser snippet must never mention it. */
     expect(html).not.toContain("Purchase");
     expect(html).not.toContain("InitiateCheckout");
+
+    /*
+     * PageView and ViewContent must stay standard Meta events (`fbq('track', ...)`),
+     * never `fbq('trackCustom', ...)` — a custom-event call would still "work"
+     * (Meta would still receive it) but Meta's Events Manager would then
+     * correctly classify it as a Custom Event rather than the standard one,
+     * which is exactly the regression this guards against.
+     */
+    expect(html).not.toContain("trackCustom");
   });
 });

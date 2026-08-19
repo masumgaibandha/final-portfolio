@@ -32,6 +32,7 @@ export const navLinks: readonly NavLink[] = [
   { label: "Services", href: "/#services" },
   { label: "About", href: "/#about" },
   { label: "Blog", href: "/blog" },
+  { label: "Masterclass", href: "/masterclass/lead-generation-cold-email" },
 ];
 
 /*

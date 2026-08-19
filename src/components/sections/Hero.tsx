@@ -1,9 +1,11 @@
 import Image from "next/image";
-import { LuArrowDown } from "react-icons/lu";
+import Link from "next/link";
+import { LuArrowDown, LuArrowRight } from "react-icons/lu";
 
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { hero, trustIndicators } from "@/data/hero";
+import { heroMasterclassCta, masterclassRegistrationHref } from "@/data/masterclass-promo";
 
 export function Hero() {
   return (
@@ -56,6 +58,15 @@ export function Hero() {
                 Start a Project
               </ButtonLink>
             </div>
+
+            {/* Understated on purpose — a promotional link, not a third button, so it never competes with the two CTAs above. */}
+            <Link
+              href={masterclassRegistrationHref}
+              className="text-ink-muted hover:text-action focus-visible:outline-action mt-5 inline-flex items-center gap-1.5 rounded-sm text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
+            >
+              {heroMasterclassCta.label}
+              <LuArrowRight className="size-3.5" aria-hidden="true" />
+            </Link>
           </div>
 
           {/*
