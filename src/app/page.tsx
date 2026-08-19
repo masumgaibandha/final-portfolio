@@ -1,7 +1,9 @@
 ﻿import { About } from "@/components/sections/About";
+import { AnnouncementBar } from "@/components/sections/AnnouncementBar";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
 import { Hero } from "@/components/sections/Hero";
+import { MasterclassPromo } from "@/components/sections/MasterclassPromo";
 import { Navbar } from "@/components/sections/Navbar";
 import { OutreachStack } from "@/components/sections/OutreachStack";
 import { Pricing } from "@/components/sections/Pricing";
@@ -21,6 +23,7 @@ export default function Home() {
         Skip to content
       </a>
 
+      <AnnouncementBar />
       <Navbar />
 
       <main id="main">
@@ -35,6 +38,8 @@ export default function Home() {
         <Projects />
         <Testimonials />
         <OutreachStack />
+        {/* One promotional band alongside OutreachStack — the freelance Pricing → Contact sequence right after stays uninterrupted. */}
+        <MasterclassPromo />
         <Pricing />
         <Contact />
       </main>
