@@ -23,14 +23,21 @@ export function AnnouncementBar() {
 
   return (
     <div className="bg-ink text-on-dark relative">
-      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-center gap-x-4 gap-y-1 px-11 py-2.5 text-center md:px-12">
+      {/*
+       * Asymmetric padding: the dismiss button only sits on the right, so a
+       * matching left reservation would just waste content width for nothing.
+       * The price is intentionally NOT `whitespace-nowrap` — this row is
+       * allowed to wrap onto a second line on narrow phones (its own
+       * `flex-wrap` + `gap-y-1` above already expect that), so nothing here
+       * is forced to stay unbroken regardless of how wide a given device's
+       * fallback font renders "৳" (Poppins' `latin` subset doesn't cover it).
+       */}
+      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-center gap-x-4 gap-y-1 pl-4 pr-11 py-2.5 text-center md:pl-6 md:pr-12">
         <p className="text-xs leading-snug font-medium sm:text-sm">
           <span className="hidden sm:inline">{announcementBar.text}</span>
           <span className="sm:hidden">{announcementBar.textShort}</span>
-          {" — "}
-          <span className="whitespace-nowrap">
-            Early Bird ৳{earlyBirdPriceBDT.toLocaleString("en-US")}
-          </span>
+          {" — Early Bird ৳"}
+          {earlyBirdPriceBDT.toLocaleString("en-US")}
         </p>
         <Link
           href={masterclassPath}
