@@ -1,14 +1,16 @@
 # MasumDev Portfolio
 
-The personal portfolio of **Abdullah Al Masum** — a full-stack web developer and B2B cold email outreach specialist. Built with Next.js 16 (App Router), React 19, TypeScript, and Tailwind CSS v4.
+The personal portfolio of **Abdullah Al Masum** — a full-stack web developer. Built with Next.js 16 (App Router), React 19, TypeScript, and Tailwind CSS v4.
 
 **Live site:** https://masumdev.com
 
-![The MasumDev homepage: an editorial hero headlined "I Build Web Products That Work and Outreach Systems That Generate Opportunities", with a portrait on a warm cream-to-peach wash and an availability note.](docs/portfolio-preview.webp)
+![The MasumDev homepage: an editorial hero headlined "I Build Full-Stack Web Products That Solve Real Business Problems", with a portrait on a warm cream-to-peach wash and an availability note.](docs/portfolio-preview.webp)
+
+> The screenshot above predates a repositioning of the site around full-stack development only; the current hero copy differs from what's pictured.
 
 ## Overview
 
-The site presents two related offerings under one identity. Development work — SaaS products, dashboards, marketplaces, and APIs built on React, Next.js, and the MERN stack — leads the page and carries the primary positioning. B2B outreach work — cold email infrastructure, deliverability, lead generation, and LinkedIn prospecting — follows as supporting expertise.
+The site presents a single, focused offering: full-stack web development — SaaS products, dashboards, marketplaces, and APIs built on React, Next.js, Node.js, and MongoDB.
 
 The design is editorial rather than decorative: the interest comes from typographic scale, whitespace, and warm color blocking. Sections alternate between two background tones for rhythm, entry motion is limited to short fades that honor `prefers-reduced-motion`, and cards use hairline borders instead of drop shadows.
 
@@ -41,7 +43,7 @@ Typography is Playfair Display (headings) and Poppins (body), loaded through `ne
 
 ## Site structure
 
-The homepage composes nine sections in this order:
+The homepage composes seven sections in this order:
 
 | # | Section | Anchor |
 |---|---|---|
@@ -50,12 +52,10 @@ The homepage composes nine sections in this order:
 | 3 | Technical Skills | `#skills` |
 | 4 | Services | `#services` |
 | 5 | Projects | `#projects` |
-| 6 | Testimonials | `#testimonials` |
-| 7 | Outreach Stack | `#stack` |
-| 8 | Pricing | `#pricing` |
-| 9 | Contact | `#contact` |
+| 6 | Pricing | `#pricing` |
+| 7 | Contact | `#contact` |
 
-Additional routes: `/resources` (recommended outreach tools, with affiliate disclosure), `/blog` (article index), and `/blog/[slug]` (article pages).
+Additional routes: `/blog` (article index) and `/blog/[slug]` (article pages).
 
 ## Featured projects
 
@@ -64,9 +64,6 @@ Additional routes: `/resources` (recommended outreach tools, with affiliate disc
 | **DentFlow** | Dental practice management SaaS | [dentflow-eight.vercel.app](https://dentflow-eight.vercel.app/) | [dentflow](https://github.com/masumgaibandha/dentflow) |
 | **SkillPath AI** | AI-powered learning platform | [skillpath-ai-frontend-umber.vercel.app](https://skillpath-ai-frontend-umber.vercel.app) | [skillpath-ai](https://github.com/masumgaibandha/skillpath-ai) |
 | **TaskForge** | Freelance micro-task marketplace with Stripe payments | [taskforge-client.vercel.app](https://taskforge-client.vercel.app/) | [client](https://github.com/masumgaibandha/taskforge-client) · [server](https://github.com/masumgaibandha/taskforge-server) |
-| **B2B Outreach System** | Cold email and lead generation workflow | — | — |
-
-The B2B Outreach System is client work, so it has no public URL.
 
 ## Technical Skills section
 
@@ -154,9 +151,8 @@ content/blog/          MDX articles + authoring guide
 docs/                  README assets
 public/                Static assets (portrait, project and blog images)
 src/app/               Routes, layout, metadata, globals.css
-  ├─ page.tsx          Homepage — composes the nine sections
+  ├─ page.tsx          Homepage — composes the seven sections
   ├─ blog/             Blog index and article pages
-  ├─ resources/        Recommended outreach tools
   ├─ sitemap.ts        Generated sitemap
   ├─ robots.ts         Generated robots.txt
   └─ opengraph-image.tsx
@@ -183,7 +179,7 @@ git push origin main
 
 ## Author
 
-**Abdullah Al Masum** — Full-Stack Developer & B2B Outreach Specialist
+**Abdullah Al Masum** — Full-Stack Web Developer
 
 - Website: https://masumdev.com
 - GitHub: [@masumgaibandha](https://github.com/masumgaibandha)

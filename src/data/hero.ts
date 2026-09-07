@@ -1,17 +1,16 @@
 import type { TrustIndicator } from "@/types";
 
 export const hero = {
-  eyebrow: "Full-Stack Developer & B2B Outreach Specialist",
-  headline: "I Build Web Products That Work",
-  headlineAccent: "and Outreach Systems That Generate Opportunities.",
+  eyebrow: "Full-Stack Web Developer",
+  headline: "I Build Full-Stack Web Products",
+  headlineAccent: "That Solve Real Business Problems.",
   description:
-    "I’m Abdullah Al Masum, a full-stack developer and B2B outreach specialist. I build fast, scalable applications using React, Next.js, TypeScript, and the MERN stack. I also help businesses reach the right prospects through cold email, lead generation, and LinkedIn outreach.",
+    "I’m Abdullah Al Masum, a full-stack web developer. I design and develop fast, secure, scalable web applications with Next.js, React, Node.js, MongoDB, and modern TypeScript — from responsive interfaces to production-ready APIs and dashboards.",
   availability: "Available for selected freelance and long-term projects.",
 } as const;
 
 export const trustIndicators: readonly TrustIndicator[] = [
-  { value: "Top Rated", label: "Upwork Freelancer" },
-  { value: "$160K+", label: "Earned on Upwork" },
-  { value: "300+", label: "Upwork projects completed" },
-  { value: "23,000+", label: "Hours worked" },
+  { value: "3", label: "Featured Full-Stack Projects" },
+  { value: "15+", label: "Technologies Used" },
+  { value: "Full-Stack", label: "Next.js, React & Node.js" },
 ];

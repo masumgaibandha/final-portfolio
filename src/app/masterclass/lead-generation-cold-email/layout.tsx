@@ -22,10 +22,15 @@ export const metadata: Metadata = {
   description: masterclassMeta.metaDescription,
   alternates: { canonical: "/masterclass/lead-generation-cold-email" },
   /*
-   * Registration is open (manual bKash/Nagad/Rocket, verified by an
-   * operator) — indexable now. `robots` is omitted rather than set
-   * explicitly, so this inherits the root layout's default
-   * `{ index: true, follow: true }` rather than duplicating it here.
+   * This page is no longer publicly reachable: `next.config.ts` `redirects()`
+   * sends this exact path (and its legacy pluralized variant) to Outbound BD
+   * with a 308 before Next.js ever resolves this route, so no browser or
+   * crawler ever sees this metadata. It's left as-is (rather than set to
+   * `noindex`) because the route, registration backend, manual bKash/Nagad/
+   * Rocket payment flow, admin queue, and legal pages are all intentionally
+   * left fully intact — see CLAUDE.md "Masterclass de-promotion". `robots`
+   * is omitted rather than set explicitly, inheriting the root layout's
+   * default `{ index: true, follow: true }`, since it's moot either way.
    */
   openGraph: {
     type: "website",

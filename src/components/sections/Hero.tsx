@@ -1,11 +1,9 @@
 import Image from "next/image";
-import Link from "next/link";
-import { LuArrowDown, LuArrowRight } from "react-icons/lu";
+import { LuArrowDown } from "react-icons/lu";
 
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { hero, trustIndicators } from "@/data/hero";
-import { heroMasterclassCta, masterclassRegistrationHref } from "@/data/masterclass-promo";
 
 export function Hero() {
   return (
@@ -55,18 +53,9 @@ export function Hero() {
                 <LuArrowDown className="size-4" aria-hidden="true" />
               </ButtonLink>
               <ButtonLink href="#contact" tone="outline" size="lg">
-                Start a Project
+                Discuss Your Project
               </ButtonLink>
             </div>
-
-            {/* Understated on purpose — a promotional link, not a third button, so it never competes with the two CTAs above. */}
-            <Link
-              href={masterclassRegistrationHref}
-              className="text-ink-muted hover:text-action focus-visible:outline-action mt-5 inline-flex items-center gap-1.5 rounded-sm text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
-            >
-              {heroMasterclassCta.label}
-              <LuArrowRight className="size-3.5" aria-hidden="true" />
-            </Link>
           </div>
 
           {/*
@@ -79,7 +68,7 @@ export function Hero() {
             <div className="border-hairline bg-canvas-alt relative aspect-[4/5] overflow-hidden rounded-[2rem] border sm:aspect-square lg:aspect-[4/5]">
               <Image
                 src="/masum.webp"
-                alt="Abdullah Al Masum, full-stack developer and B2B outreach specialist"
+                alt="Abdullah Al Masum, full-stack web developer"
                 width={1100}
                 height={825}
                 priority
@@ -99,9 +88,9 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Trust indicators — factual Upwork numbers, set as an editorial strip. */}
+        {/* Trust indicators — verified development facts, set as an editorial strip. */}
         <dl
-          className="border-hairline mt-20 grid grid-cols-2 gap-x-8 gap-y-10 border-t pt-10 md:grid-cols-4"
+          className="border-hairline mt-20 grid grid-cols-1 gap-x-8 gap-y-10 border-t pt-10 sm:grid-cols-3"
           data-reveal
         >
           {trustIndicators.map((indicator) => (

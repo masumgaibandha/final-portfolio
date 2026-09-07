@@ -4,21 +4,19 @@ export const contactIntro = {
   label: "Contact",
   heading: "Tell Me About Your Project",
   description:
-    "Need a full-stack developer, a cold email specialist, or help building a targeted prospecting system? Send me a few details about your project and I’ll respond directly.",
+    "Need a full-stack developer for a new application, or help improving an existing one? Send me a few details about your project and I’ll respond directly.",
   /* Carried over from the removed CTA band so the approved copy isn't lost. */
   guidance:
     "Tell me what you’re working on, where you’re currently stuck, and what result you want to achieve. I’ll review the details and recommend the clearest next step.",
 } as const;
 
 export const serviceOptions: readonly SelectOption[] = [
-  { value: "full-stack", label: "Full-Stack Web Development" },
-  { value: "nextjs-react", label: "Next.js or React Development" },
-  { value: "mern", label: "MERN Stack Development" },
-  { value: "saas-mvp", label: "SaaS or MVP Development" },
-  { value: "cold-email", label: "Cold Email Outreach" },
-  { value: "lead-generation", label: "Lead Generation" },
-  { value: "linkedin", label: "LinkedIn Outreach" },
-  { value: "other", label: "Other" },
+  { value: "full-stack", label: "Full-Stack Web Application" },
+  { value: "frontend", label: "Frontend Development" },
+  { value: "backend-api", label: "Backend/API Development" },
+  { value: "dashboard-admin", label: "Dashboard or Admin Panel" },
+  { value: "existing-app", label: "Existing Application Improvement" },
+  { value: "other", label: "Other Development Project" },
 ];
 
 export const budgetOptions: readonly SelectOption[] = [
@@ -32,8 +30,6 @@ export const budgetOptions: readonly SelectOption[] = [
 
 export const footer = {
   positioning:
-    "Full-Stack Developer and B2B Outreach Specialist building useful digital products and practical growth systems for businesses worldwide.",
+    "Full-Stack Web Developer building fast, secure, scalable web applications for businesses worldwide.",
   copyright: "© 2026 MasumDev. All rights reserved.",
-  affiliateDisclosure:
-    "Some links on this website may be affiliate links. If you purchase through one of these links, I may receive a commission at no additional cost to you. I only recommend tools I use or genuinely trust.",
 } as const;

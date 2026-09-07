@@ -4,7 +4,7 @@ import { LuArrowRight, LuCheck } from "react-icons/lu";
 import { ButtonLink } from "@/components/ui/Button";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { outreachQuote, pricingIntro, pricingTiers } from "@/data/pricing";
+import { pricingIntro, pricingTiers } from "@/data/pricing";
 
 export function Pricing() {
   return (
@@ -21,8 +21,20 @@ export function Pricing() {
        * `items-stretch` (the grid default) plus `h-full` on each card gives the
        * three tiers a common height without a fixed one, so mobile still sizes
        * to content and cannot overflow.
+       *
+       * `grid-cols-1` is required on the base breakpoint, not just implied by
+       * omitting it: without an explicit `repeat(1, minmax(0, 1fr))`, the
+       * single implicit column falls back to `grid-auto-columns: auto`, which
+       * has no `minmax(0, ...)` floor. All three `<li>` share that one track,
+       * so its width is driven by whichever tier's own min-content is widest —
+       * here, the unbadged "Custom Web Application" header row, whose `h3`
+       * alone needs ~236px. At 320px viewport that pushed every card to
+       * ~302px, 30px past the 272px content area (confirmed via real
+       * Playwright viewport testing, not screenshots). `minmax(0, 1fr)` gives
+       * the track an explicit zero floor so it shrinks to the container
+       * instead of the widest card's content.
        */}
-      <ul className="mt-16 grid items-stretch gap-6 lg:grid-cols-3">
+      <ul className="mt-16 grid grid-cols-1 items-stretch gap-6 lg:grid-cols-3">
         {pricingTiers.map((tier) => (
           <li
             key={tier.id}
@@ -136,23 +148,6 @@ export function Pricing() {
           </li>
         ))}
       </ul>
-
-      <div
-        className="border-hairline mt-6 flex flex-col gap-6 border p-8 md:flex-row md:items-center md:justify-between md:p-10"
-        data-reveal
-      >
-        <div className="max-w-2xl">
-          <h3 className="font-heading text-ink text-xl tracking-tight md:text-2xl">
-            {outreachQuote.heading}
-          </h3>
-          <p className="text-ink-muted mt-3 leading-relaxed">
-            {outreachQuote.description}
-          </p>
-        </div>
-        <ButtonLink href="#contact" tone="ink" size="lg" className="shrink-0">
-          {outreachQuote.ctaLabel}
-        </ButtonLink>
-      </div>
     </Section>
   );
 }
