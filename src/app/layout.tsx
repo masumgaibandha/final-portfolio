@@ -31,7 +31,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Full-Stack Developer & B2B Outreach | MasumDev",
+    default: "Full-Stack Web Developer | MasumDev",
     template: `%s | ${site.name}`,
   },
   description: site.description,
@@ -44,23 +44,23 @@ export const metadata: Metadata = {
     "freelance full-stack developer",
     "Next.js developer",
     "React developer",
+    "Node.js developer",
     "MERN stack developer",
-    "cold email outreach specialist",
-    "B2B lead generation specialist",
+    "MongoDB developer",
   ],
   openGraph: {
     type: "website",
     url: site.url,
     siteName: site.name,
-    title: "Full-Stack Developer & B2B Outreach | MasumDev",
+    title: "Full-Stack Web Developer | MasumDev",
     description:
-      "Explore full-stack web applications, SaaS products, and B2B outreach services from Abdullah Al Masum.",
+      "Explore full-stack web applications and SaaS products built by Abdullah Al Masum with Next.js, React, Node.js, and MongoDB.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Full-Stack Developer & B2B Outreach | MasumDev",
+    title: "Full-Stack Web Developer | MasumDev",
     description:
-      "Explore full-stack web applications, SaaS products, and B2B outreach services from Abdullah Al Masum.",
+      "Explore full-stack web applications and SaaS products built by Abdullah Al Masum with Next.js, React, Node.js, and MongoDB.",
     creator: "@almasumbd",
   },
   robots: {
@@ -84,13 +84,9 @@ const profileJsonLd = {
     name: site.fullName,
     alternateName: site.name,
     url: `${site.url}/`,
-    jobTitle: [
-      "Full-Stack Web Developer",
-      "Cold Email Outreach Specialist",
-      "B2B Lead Generation Specialist",
-    ],
+    jobTitle: ["Full-Stack Web Developer"],
     description:
-      "Full-stack web developer and B2B outreach specialist building scalable web applications and client acquisition systems.",
+      "Full-stack web developer building scalable web applications with Next.js, React, Node.js, and MongoDB.",
     nationality: { "@type": "Country", name: "Bangladesh" },
     knowsAbout: [
       "Next.js",
@@ -101,10 +97,8 @@ const profileJsonLd = {
       "Express.js",
       "MongoDB",
       "MERN Stack",
-      "Cold Email Outreach",
-      "Email Deliverability",
-      "B2B Lead Generation",
-      "LinkedIn Outreach",
+      "REST APIs",
+      "Tailwind CSS",
     ],
     sameAs: [
       "https://www.linkedin.com/in/almasumbd",

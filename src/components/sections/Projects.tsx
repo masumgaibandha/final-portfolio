@@ -27,10 +27,10 @@ export function Projects() {
         {projects.map((project, index) => {
           /*
            * Anything wider than ~1.8:1 gets a full-width banner instead of a
-           * side panel. The B2B dashboard is 2.06:1, and forcing that into a
-           * roughly square side panel would crop away more than half its width
-           * — including the metrics at both far edges. The banner takes the
-           * source's own ratio, so `object-cover` covers it with zero crop.
+           * side panel — forcing a very wide screenshot into a roughly square
+           * side panel would crop away more than half its width. The banner
+           * takes the source's own ratio, so `object-cover` covers it with
+           * zero crop.
            */
           const isWide = project.image
             ? project.image.width / project.image.height > 1.8

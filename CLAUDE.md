@@ -4,20 +4,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-A premium, editorial-style personal portfolio for Masum — full-stack developer and cold email outreach specialist. Homepage sections in this order: **Navbar, Hero, About, Services, Outreach Stack, Projects, Testimonials, Pricing, Contact, Footer**, plus a `/resources` page.
+A premium, editorial-style personal portfolio for Masum — a **full-stack web developer**, positioned exclusively around Next.js/React/Node.js/MongoDB development work. Homepage sections in this order: **Navbar, Hero, About, Technical Skills, Services, Projects, Pricing, Contact, Footer**.
 
 The standalone CTA band that once sat between Pricing and Contact was removed — back to back, the two read as the same ask twice. Its copy now introduces the contact form. Don't reintroduce it.
 
-**Affiliate content** (Outreach Stack section + `/resources`) is approved copy from `portfolio-content.md` § "Recommended Outreach Tools", mirrored into `src/data/resources.ts`. Rules that are not stylistic preferences:
+**The site was repositioned away from a mixed "developer + B2B outreach specialist" identity to a full-stack-developer-only portfolio.** As part of that change, the following were removed entirely and must not be reintroduced on the public portfolio:
 
-- Affiliate tools are **recommendations, never a service**. They must not appear in the hero, About, Services, or the primary positioning.
-- The disclosure renders directly beneath the tool cards on both surfaces — the footer disclosure does not satisfy this.
-- Affiliate URLs are copied character for character; a mistyped `via` parameter silently drops attribution.
-- Every affiliate link goes through `AffiliateLink`, which hardcodes `target="_blank"` and `rel="sponsored nofollow noopener noreferrer"` so no call site can ship a monetised link without them.
+- The **Outreach Stack** affiliate-tools section (`OutreachStack.tsx`, `src/data/resources.ts`, `AffiliateLink.tsx`) and the `/resources` route it lived on. All of it was recommendations for cold-email tooling (Zapmail, ReachInbox, Instantly), which has no place in a dev-only portfolio.
+- The **Testimonials** section (`Testimonials.tsx`, `TestimonialCard.tsx`, `src/data/testimonials.ts`). Every testimonial transcribed from the source screenshots was about cold-email/outreach work — none were about web development — so the section was dropped rather than repurposed or filled with invented dev quotes. If genuine development testimonials become available later, re-add the section rather than resurrecting the old outreach-quote content.
+- The homepage's masterclass promotion: `AnnouncementBar.tsx`, `MasterclassPromo.tsx`, and `src/data/masterclass-promo.ts`. See "Masterclass de-promotion" below — the masterclass product itself (route, registration backend, admin, legal pages) is untouched, only its portfolio-side promotion was removed.
+- Outreach-flavored copy across `hero.ts`, `about.ts`, `services.ts`, `contact.ts`, `pricing.ts` (the `outreachQuote` CTA), `blog.ts`, `site.ts`, and the root `layout.tsx`/`opengraph-image.tsx` metadata — all rewritten to describe full-stack development only. `projects.ts` lost its one outreach case study (`b2b-outreach-system`); the shipped screenshot at `public/projects/b2b-outreach-system.webp` was deleted as unused.
+
+### Masterclass de-promotion
+
+`/masterclass/lead-generation-cold-email` (the Bengali cold-email masterclass sales page — see "Masterclass sales page" below) is inherently about the outreach topic it teaches, so its own content was **not** rewritten — that would misrepresent the product. It was de-promoted from the portfolio: removed from `navLinks`/`footerLinks` (`site.ts`), the homepage (`AnnouncementBar`, `MasterclassPromo`), and `sitemap.ts`.
+
+**Legacy MasumDev masterclass traffic now permanently redirects to Outbound BD**, which hosts the live equivalent page at `https://outboundbd.com/masterclass/lead-generation-cold-email`. `next.config.ts` `redirects()` sends both `/masterclass/lead-generation-cold-email` and the legacy pluralized `/masterclasses/lead-generation-cold-email` there with `permanent: true` (a genuine 308), preserving any query string (UTM params included) automatically. `redirects()` is checked before the filesystem router, so this intercepts the request ahead of the still-live page component — the old MasumDev page is no longer publicly rendered, but nothing was deleted to achieve that: the route, its registration/payment backend, admin queue, and legal pages (`/privacy-policy`, `/terms-and-conditions`, `/refund-policy`) are all left fully intact, and no historical registration/order data was touched. Neither redirect source path is nested under `/masterclass/admin`, so the Basic-Auth-protected admin review queue stays reachable directly. The route's own metadata no longer overrides `robots` — that's moot now that the redirect intercepts before the page ever renders.
+
+This redirect is implemented entirely inside the MasumDev repository; the Outbound BD repository/deployment/database is never touched from here.
 
 ## Project status
 
-Scaffolded and building. Next.js 16 (App Router, Turbopack), React 19, Tailwind v4, HeroUI v3. The homepage and its ten sections are implemented; the sub-pages in the SEO structure table are not.
+Scaffolded and building. Next.js 16 (App Router, Turbopack), React 19, Tailwind v4, HeroUI v3. The homepage and its sections are implemented; the sub-pages in the SEO structure table are not.
 
 Environment: Node v22.17.0, npm 10.9.2, git 2.50.0. The repo is **not** under version control yet.
 
@@ -110,9 +118,8 @@ Editorial scale: display type is large and tight — hero around `clamp(3rem, 8v
 
 ```
 src/app/layout.tsx          fonts, HeroUIProvider, root metadata, JSON-LD
-src/app/page.tsx            composes the ten sections in order
+src/app/page.tsx            composes the homepage sections in order
 src/app/globals.css         @theme tokens, base layer
-src/app/resources/page.tsx  affiliate tools page (own metadata + canonical)
 src/components/sections/    one file per section (Hero.tsx, Services.tsx, …)
 src/components/ui/          Container, Section, SectionHeading, button wrappers
 src/data/                   typed content arrays
@@ -122,7 +129,7 @@ public/                     portraits copied from resources/
 
 Conventions:
 
-- **Server Components by default.** Four client components exist today: `MobileNav`, `ContactForm`, `RevealOnScroll`, and `AffiliateLink` (its `onClick` analytics hook needs the browser). Keep client boundaries at the leaf, not the section — `Navbar` and `Contact` are both server components that render a client leaf. Testimonials are a static masonry grid, deliberately not a carousel. The masterclass sales page (below) adds none of its own — it stays fully server-rendered.
+- **Server Components by default.** On the main portfolio, the client components are `MobileNav`, `ContactForm`, and `RevealOnScroll`. Keep client boundaries at the leaf, not the section — `Navbar` and `Contact` are both server components that render a client leaf. (The masterclass sales page adds its own client leaves — `MasterclassRegistrationForm`, `TurnstileWidget` — documented under "Masterclass sales page" below.)
 - **Content lives in `src/data/*.ts`**, typed against `src/types/`. Sections map over data and stay presentational — no inline copy arrays inside JSX.
 - **`Section` owns vertical rhythm and banding.** It applies the `py-*` scale and alternates `bg-bg` / `bg-surface`. Individual sections must not set their own vertical padding, or spacing drifts.
 - **Every section takes an `id`** matching its navbar anchor (`#about`, `#services`, …); scroll offset is handled once via `scroll-mt-*`, not per-link.
@@ -251,4 +258,4 @@ Origin validation, rate limiting, and Cloudflare Turnstile verification are full
 
 - `demo.png` — visual reference for **color, spacing, and mood**: warm cream→peach wash, black pill nav CTA, oversized display headline, "available for new opportunities" chip with an orange dot, cut-out portrait bleeding into the type. Its typefaces are *not* the spec — Playfair Display / Poppins above govern.
 - `masum.png` (4:3), `masum-2.png` (16:9) — portrait photos on the warm wash. Hero art. Both carry their own baked-in cream backdrop and are **not** cut out, so the hero frames `masum.png` in a rounded panel and crops it to a portrait ratio rather than floating it against the page.
-- `upwork-client-feedback-*.png`, `fiverr-client-feedback-*.png` — the source of every quote in `src/data/testimonials.ts`, transcribed verbatim. Client names are redacted in the screenshots and must stay withheld. **Never write a testimonial that isn't in one of these files.**
+- `upwork-client-feedback-*.png`, `fiverr-client-feedback-*.png` — every quote transcribed from these was about cold-email/outreach work, so the Testimonials section was removed rather than repurposed (see "Project" above). Kept as historical reference only; do not use them as a source for new dev-portfolio testimonials — client names are redacted in the screenshots and must stay withheld, and **never write a testimonial that isn't sourced from a genuine screenshot.**

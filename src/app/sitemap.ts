@@ -24,24 +24,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
-    {
-      url: `${site.url}/resources`,
-      lastModified,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
     /*
-     * Registration is open (manual bKash/Nagad/Rocket, admin-verified) — the
-     * sales page is now indexable and belongs in the sitemap. The admin
-     * review queue under /masterclass/admin/** stays out of both the
-     * sitemap and search results (noindex + Basic Auth).
+     * The Lead Generation & Cold Email Outreach masterclass is not listed
+     * here: `next.config.ts` permanently redirects
+     * `/masterclass/lead-generation-cold-email` (and the legacy pluralized
+     * path) to Outbound BD's own page, so there is no longer a MasumDev URL
+     * for this content to point search engines at. See CLAUDE.md
+     * "Masterclass de-promotion".
      */
-    {
-      url: `${site.url}/masterclass/lead-generation-cold-email`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
     {
       url: `${site.url}/blog`,
       lastModified,
@@ -49,11 +39,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     ...posts,
-    /*
-     * Public, index/follow legal pages (Phase 3A). The masterclass sales
-     * page itself stays out of this sitemap — it's still `noindex, nofollow`
-     * until checkout is functional.
-     */
+    /* Public, index/follow legal pages (Phase 3A). */
     ...legalPageLinks.map((link) => ({
       url: `${site.url}${link.href}`,
       lastModified,

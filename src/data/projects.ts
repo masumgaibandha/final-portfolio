@@ -2,9 +2,9 @@ import type { Project } from "@/types";
 
 export const projectsIntro = {
   label: "Selected Work",
-  heading: "Products and Systems I’ve Built",
+  heading: "Products I’ve Built",
   description:
-    "A selection of SaaS products, web applications, and growth systems that demonstrate how I approach product development and business problems.",
+    "A selection of SaaS products and web applications that demonstrate how I approach full-stack development and product problems.",
 } as const;
 
 export const projects: readonly Project[] = [
@@ -113,38 +113,6 @@ export const projects: readonly Project[] = [
        * app UI — task cards and freelancer list — and drops the sliver.
        */
       objectPosition: "object-right",
-    },
-  },
-  {
-    id: "b2b-outreach-system",
-    name: "B2B Outreach System",
-    category: "Cold Email and Lead Generation",
-    heading: "A Repeatable Outreach System for B2B Client Acquisition",
-    description:
-      "An end-to-end outreach workflow covering email infrastructure, prospect sourcing, segmentation, campaign creation, deliverability monitoring, and reply management.",
-    highlights: [
-      "Ideal customer profile research",
-      "Domain and mailbox infrastructure",
-      "Targeted lead sourcing",
-      "Email verification",
-      "Campaign sequences",
-      "Performance monitoring",
-    ],
-    tags: ["Cold Email", "Deliverability", "Lead Generation", "Automation"],
-    /* Client engagements, so there is nothing public to link to. */
-    links: [],
-    image: {
-      src: "/projects/b2b-outreach-system.webp",
-      width: 1100,
-      height: 534,
-      alt: "An Instantly.ai campaign dashboard reporting 5.6K emails sent, an 83.9% open rate, a 2.7% reply rate and 25 opportunities, above a daily sends-and-opens chart.",
-      /*
-       * At 2.06:1 this is far wider than the side panels, so Projects gives it
-       * a full-width banner whose ratio matches the source — no crop at all,
-       * which matters because the metrics sit at both far edges and a cover
-       * crop in a square panel would discard more than half of them.
-       */
-      objectPosition: "object-center",
     },
   },
 ];

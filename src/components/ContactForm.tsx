@@ -205,7 +205,7 @@ export function ContactForm() {
       noValidate
       className="border-hairline bg-surface border p-8 md:p-10"
     >
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <Field
           id={fieldId("name")}
           errorId={errorId("name")}
@@ -371,7 +371,8 @@ export function ContactForm() {
         className={buttonClass({
           tone: "ink",
           size: "lg",
-          className: "mt-8 disabled:cursor-not-allowed disabled:opacity-60",
+          className:
+            "mt-8 w-full sm:w-fit disabled:cursor-not-allowed disabled:opacity-60",
         })}
       >
         {status === "sending" ? "Sending…" : "Send Project Details"}

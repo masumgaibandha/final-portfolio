@@ -2,8 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt =
-  "Abdullah Al Masum — Full-Stack Developer and B2B Outreach Specialist";
+export const alt = "Abdullah Al Masum — Full-Stack Web Developer";
 
 /*
  * Generated rather than shipped as a file so the card stays in sync with the
@@ -66,12 +65,12 @@ export default function OpengraphImage() {
               color: "#625E5B",
             }}
           >
-            Full-Stack Developer &amp; B2B Outreach Specialist
+            Full-Stack Web Developer
           </span>
         </div>
 
         <span style={{ fontSize: 26, color: "#625E5B" }}>
-          Next.js · React · MERN · Cold Email · Lead Generation
+          Next.js · React · Node.js · MongoDB · TypeScript
         </span>
       </div>
     ),

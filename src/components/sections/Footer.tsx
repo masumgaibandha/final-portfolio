@@ -91,11 +91,6 @@ export function Footer() {
             </ul>
           </div>
         </div>
-
-        {/* Legally required, so it stays — set small and quiet rather than dropped. */}
-        <p className="text-on-dark-muted border-on-dark/15 mt-10 border-t pt-6 text-xs leading-relaxed">
-          {footer.affiliateDisclosure}
-        </p>
       </Container>
 
       {/*
