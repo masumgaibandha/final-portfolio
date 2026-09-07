@@ -70,10 +70,3 @@ export const pricingTiers: readonly PricingTier[] = [
     ctaLabel: "Discuss Your Application",
   },
 ];
-
-export const outreachQuote = {
-  heading: "Outreach work is quoted separately",
-  description:
-    "Need cold email outreach, lead generation, or LinkedIn prospecting? These services are quoted based on your target market, lead volume, infrastructure, and level of campaign management.",
-  ctaLabel: "Request an Outreach Quote",
-} as const;

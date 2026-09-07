@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Build a premium, modern portfolio website for Abdullah Al Masum. Position him primarily as a full-stack web developer, with cold email outreach and lead generation as complementary growth services.
+Build a premium, modern portfolio website for Abdullah Al Masum. Position him exclusively as a full-stack web developer — no other line of work is part of the public positioning.
 
 ## Technology
 
@@ -59,13 +59,11 @@ Use the orange sparingly for indicators, active states, and small highlights. A 
 
 Use the following copy as the content source. Minor edits are allowed for grammar, clarity, responsive layout, and avoiding repetition, but do not change factual claims without approval.
 
-Your strongest positioning is:
+Your positioning is:
 
-> Full-stack developer first, with cold email outreach and lead generation as complementary growth services.
+> Full-stack web developer, building production-ready web applications, dashboards, platforms, APIs, authentication systems, and responsive user experiences.
 
-Avoid placing affiliate marketing prominently in the hero. It can distract potential clients. Add a separate “Recommended Tools” or “Resources” page for affiliate content.
-
-I also recommend adding a Services section, even though it wasn’t in your original list. Without it, visitors may not understand exactly what they can hire you for.
+**Repositioning note (2026):** the site previously carried a mixed "full-stack developer + B2B cold email outreach specialist" identity, with an affiliate "Recommended Outreach Tools" section, an outreach-flavored Testimonials section, and a cold-email/lead-generation case study among the featured projects. All of that was removed so the public portfolio reads as development-only. The masterclass sales page's own content was left untouched (rewriting it would misrepresent that separate product), but legacy MasumDev traffic to `/masterclass/lead-generation-cold-email` (and the pluralized `/masterclasses/lead-generation-cold-email`) now permanently redirects to Outbound BD's own live page — see `CLAUDE.md` § "Masterclass de-promotion" for the full reasoning.
 
 # 1. Navbar
 
@@ -78,7 +76,7 @@ MasumDev
 * About
 * Services
 * Projects
-* Testimonials
+* Blog
 * Pricing
 * Contact
 
@@ -88,19 +86,19 @@ Let’s Talk
 # 2. Hero Area
 
 **Small heading:**
-Full-Stack Developer & B2B Outreach Specialist
+Full-Stack Web Developer
 
 **Main heading (H1):**
-I Build Web Products That Work—and Outreach Systems That Generate Opportunities.
+I Build Full-Stack Web Products That Solve Real Business Problems.
 
 **Description:**
-I’m Abdullah Al Masum, a full-stack developer and B2B outreach specialist. I build fast, scalable applications using React, Next.js, TypeScript, and the MERN stack. I also help businesses reach the right prospects through cold email, lead generation, and LinkedIn outreach.
+I’m Abdullah Al Masum, a full-stack web developer. I design and develop fast, secure, scalable web applications with Next.js, React, Node.js, MongoDB, and modern TypeScript — from responsive interfaces to production-ready APIs and dashboards.
 
 **Primary button:**
 View My Projects
 
 **Secondary button:**
-Start a Project
+Discuss Your Project
 
 **Résumé button:**
 Download My Résumé
@@ -113,10 +111,11 @@ Available for selected freelance and long-term projects.
 
 **Trust indicators:**
 
-* Top Rated Upwork Freelancer
-* $160K+ Earned
-* 300+ Upwork Projects Completed
-* 23,000+ Hours Worked
+* 3 Featured Full-Stack Projects
+* 15+ Technologies Used
+* Full-Stack — Next.js, React & Node.js
+
+Do not reintroduce dollar-earnings or hours-worked figures here — those were earned across a mix of development and non-development freelance work and cannot be honestly attributed to web development alone.
 
 # 3. About Area
 
@@ -124,18 +123,20 @@ Available for selected freelance and long-term projects.
 About Me
 
 **Heading:**
-Development Experience With a Practical Growth Mindset
+Full-Stack Development Experience With a Practical Mindset
 
 **Content:**
-I’m a full-stack web developer and outreach professional based in Bangladesh, working with clients worldwide.
+I’m a full-stack web developer based in Bangladesh, working with clients worldwide.
 
-On the development side, I create responsive websites, SaaS applications, dashboards, marketplaces, APIs, and custom business platforms. My primary technologies include JavaScript, TypeScript, React, Next.js, Node.js, Express.js, and MongoDB.
+I build responsive websites, SaaS applications, dashboards, marketplaces, APIs, and custom business platforms. My primary technologies are JavaScript, TypeScript, React, Next.js, Node.js, Express.js, and MongoDB.
 
-My experience in cold email outreach and lead generation gives me a broader understanding of how businesses attract prospects, convert opportunities, and grow. I have helped B2B companies with email infrastructure, deliverability, prospect research, campaign management, and LinkedIn outreach.
+My work covers the full stack — from designing accessible, responsive interfaces to building authentication, role-based dashboards, database schemas, and third-party integrations like payments. I care about shipping applications that hold up under real usage, not just demos.
 
-Whether I’m developing a web application or building an outreach system, my focus is the same: understand the real problem, create a practical solution, and communicate clearly throughout the project.
+Whatever the project, my focus is the same: understand the real problem, create a practical solution, and communicate clearly throughout.
 
 ### Technical skills
+
+Mirrors `src/data/skills.ts` exactly — do not add a technology here that isn't genuinely used and reflected there.
 
 **Frontend Development**
 
@@ -143,43 +144,23 @@ Whether I’m developing a web application or building an outreach system, my fo
 * CSS3
 * JavaScript
 * TypeScript
-* React
+* React.js
 * Next.js
 * Tailwind CSS
-* HeroUI
 
-**Backend Development**
+**Backend & Database**
 
 * Node.js
 * Express.js
 * MongoDB
 * REST APIs
-* Authentication (Better Auth & Firebase)
-* Role-based authorization
-* Third-party integrations
 
-**B2B Growth**
+**Tools & Deployment**
 
-* Cold email infrastructure
-* Email deliverability
-* Lead generation
-* Prospect list building
-* LinkedIn Outreach
-* Campaign management
-* Mailbox configuration for Google Workspace, Microsoft 365, and other providers
-* Reply management
-* Outreach automation
-
-**Tools**
-
-* Instantly
-* Smartlead
-* ReachInbox
-* Lemlist
-* Apollo
-* HubSpot
-* Google Workspace
-* Microsoft 365
+* Git
+* GitHub
+* Vercel
+* Netlify
 
 # 4. Services Area
 
@@ -189,74 +170,70 @@ Services
 **Heading:**
 How I Can Help Your Business
 
-### Full-Stack Web Development
+### Full-Stack Web Applications
 
-I build responsive, scalable websites and web applications using modern frontend and backend technologies. From business websites to complex SaaS platforms, I can manage the complete development process.
+I build complete web applications end to end — from the database schema to the deployed frontend — using Next.js, React, Node.js, Express.js, and MongoDB.
 
 **Services include:**
 
-* Next.js and React development
-* MERN stack applications
+* Next.js App Router applications
 * SaaS and MVP development
-* Admin dashboards
-* API development and integrations
-* Authentication and authorization
-* Database design
-* Performance optimization
+* Admin and role-based dashboards
+* Authentication and protected routes
+* Payment integrations
+* Database schema and query design
+* Deployment and production readiness
 
 **Button:**
 Discuss a Development Project
 
-### Cold Email Outreach
+### Frontend Development
 
-I build and manage cold email systems designed around relevance, deliverability, and consistent execution—not mass sending.
-
-**Services include:**
-
-* Domain and mailbox setup
-* DNS configuration
-* Deliverability audits
-* Campaign strategy
-* Email sequence writing
-* Campaign launch and management
-* Performance monitoring
-* Reply handling
-
-**Button:**
-Improve My Outreach
-
-### B2B Lead Generation
-
-I research and build targeted prospect lists based on your ideal customer profile, market, company size, location, technology, and buying signals.
+I build responsive, accessible React interfaces that hold up across devices — from marketing pages to complex, data-driven dashboards.
 
 **Services include:**
 
-* Ideal customer profile development
-* Apollo prospecting
-* LinkedIn Sales Navigator research
-* Contact data enrichment
-* Email verification
-* Lead segmentation
-* CRM-ready prospect lists
+* Responsive React and Next.js interfaces
+* Component architecture and reusable UI
+* Tailwind CSS and HeroUI implementation
+* Client-side form validation
+* Accessibility and responsive QA
+* Performance optimization
 
 **Button:**
-Build My Prospect List
+Discuss a Frontend Project
 
-### LinkedIn Outreach
+### Backend APIs and Database Systems
 
-I help businesses identify and connect with relevant decision-makers through personalized LinkedIn prospecting and structured follow-up.
+I design and build the backend systems that power an application — REST APIs, database models, and the business logic connecting them.
 
 **Services include:**
 
-* Prospect research
-* Connection strategy
-* Personalized messaging
-* Follow-up sequences
-* Response tracking
-* Lead qualification
+* REST API design and integration
+* MongoDB schema and query implementation
+* Authentication and role-based access control
+* Third-party API integrations
+* Rate limiting and request validation
+* Admin workflows
 
 **Button:**
-Plan a LinkedIn Campaign
+Discuss a Backend Project
+
+### Product Engineering and Optimization
+
+For an existing application, I improve what's already shipped — performance, accessibility, code quality, and features that need to be added or fixed.
+
+**Services include:**
+
+* Performance optimization
+* Accessibility and responsive QA
+* Codebase review and refactoring
+* New feature implementation
+* Bug fixes and stability improvements
+* Deployment and CI improvements
+
+**Button:**
+Discuss an Existing Application
 
 # 5. Project Area
 
@@ -264,10 +241,10 @@ Plan a LinkedIn Campaign
 Selected Work
 
 **Heading:**
-Products and Systems I’ve Built
+Products I’ve Built
 
 **Introduction:**
-A selection of SaaS products, web applications, and growth systems that demonstrate how I approach product development and business problems.
+A selection of SaaS products and web applications that demonstrate how I approach full-stack development and product problems.
 
 ### DentFlow
 
@@ -350,266 +327,31 @@ Marketplace · Stripe Payments · MERN · Full-Stack
 * Client repo: `https://github.com/masumgaibandha/taskforge-client`
 * Server repo: `https://github.com/masumgaibandha/taskforge-server`
 
-### B2B Outreach System
+**Removed:** the "B2B Outreach System" project (cold email/lead-generation case study) was dropped from featured work as part of the full-stack-only repositioning — it demonstrated outreach work, not software development. Do not re-add it, or any other non-development case study, to this section.
 
-**Category:**
-Cold Email and Lead Generation
+# 6. Testimonial Area — removed
 
-**Heading:**
-A Repeatable Outreach System for B2B Client Acquisition
+The Testimonials section was removed from the homepage. Every testimonial transcribed from the source screenshots (`resources/upwork-client-feedback-*.png`, `resources/fiverr-client-feedback-*.png`) was about cold-email/outreach work — none were about web development — so there was no genuine development testimonial to keep, and inventing one is not allowed.
 
-**Description:**
-An end-to-end outreach workflow covering email infrastructure, prospect sourcing, segmentation, campaign creation, deliverability monitoring, and reply management.
-
-**Highlights:**
-
-* Ideal customer profile research
-* Domain and mailbox infrastructure
-* Targeted lead sourcing
-* Email verification
-* Campaign sequences
-* Performance monitoring
-
-**Tags:**
-Cold Email · Deliverability · Lead Generation · Automation
-
-**Button:**
-View My Outreach Process
-
-
-# Recommended Outreach Tools
-
-## Positioning and Placement
-
-Do not present affiliate marketing as a service or mention it in the hero, About section, or primary positioning.
-
-Add a compact “My Outreach Stack” section after Services and before Projects. Also create a dedicated `/resources` page containing more detailed tool recommendations.
-
-The recommendations must feel educational and based on real experience. Do not describe every tool as the “best.” Explain which use case each tool is suitable for.
-
-# Homepage Tools Section
-
-**Section label:**  
-My Outreach Stack
-
-**Heading:**  
-Tools Behind My Outreach Work
-
-**Description:**  
-These are tools I use across real cold email workflows—from mailbox infrastructure and campaign management to deliverability monitoring and reply handling. Each platform serves a different purpose, so the right choice depends on your team, sending volume, and workflow.
-
-## Zapmail
-
-**Category:**  
-Email Infrastructure
-
-**Heading:**  
-Build and Manage Your Sending Infrastructure
-
-**Description:**  
-I use Zapmail to simplify the setup and management of outreach mailboxes. It is a practical option for teams that need scalable Google or Microsoft email infrastructure without configuring every account manually.
-
-**Used for:**
-
-- Google and Microsoft mailboxes
-- Outreach infrastructure
-- Mailbox management
-- Domain and DNS workflows
-- Scaling sending accounts
-
-**Button:**  
-Explore Zapmail
-
-**Affiliate URL:**  
-`https://zapmail.ai/?via=abdullah`
-
-## ReachInbox
-
-**Category:**  
-All-in-One Outreach Platform
-
-**Heading:**  
-Manage Outreach From One Platform
-
-**Description:**  
-ReachInbox is a practical all-in-one option for creating campaigns, connecting email accounts, managing warm-up, monitoring performance, personalizing outreach, and organizing replies.
-
-**Used for:**
-
-- Campaign management
-- Email account warm-up
-- Lead sourcing and personalization
-- Campaign analytics
-- Unified reply management
-- Deliverability monitoring
-
-**Button:**  
-Explore ReachInbox
-
-**Affiliate URL:**  
-`https://www.reachinbox.ai/?via=abdullah`
-
-## Instantly
-
-**Category:**  
-Cold Email Campaign Platform
-
-**Heading:**  
-Build and Scale Cold Email Campaigns
-
-**Description:**  
-I use Instantly to manage multiple sending accounts, organize leads, create outreach sequences, monitor campaign performance, and handle replies from a centralized workspace.
-
-**Used for:**
-
-- Multi-account campaign management
-- Email warm-up
-- Lead and campaign organization
-- Automated follow-ups
-- Campaign analytics
-- Centralized reply management
-
-**Button:**  
-Explore Instantly
-
-**Affiliate URL:**  
-`https://instantly.ai/?via=aam`
-
-## Homepage Section CTA
-
-**Heading:**  
-Not Sure Which Tool Fits Your Outreach Setup?
-
-**Description:**  
-The right platform depends on your target market, campaign volume, mailbox infrastructure, and internal workflow. I can help you choose and configure a setup that fits your actual requirements.
-
-**Primary button:**  
-Discuss Your Outreach Setup
-
-**Secondary button:**  
-View All Recommended Tools
-
-**Secondary button URL:**  
-`/resources`
-
-## Affiliate Disclosure
-
-Display this disclosure directly below the tool cards. Do not place it only in the footer.
-
-> **Disclosure:** Some links in this section are affiliate links. If you sign up through one of these links, I may earn a commission at no additional cost to you. I recommend these tools because I personally use them in real outreach work.
-
-# Resources Page
-
-**URL:**  
-`/resources`
-
-**SEO title:**  
-Cold Email Tools I Use and Recommend | MasumDev
-
-**Meta description:**  
-Explore the cold email infrastructure, campaign management, deliverability, and lead generation tools I use in real B2B outreach workflows.
-
-**Page label:**  
-Recommended Resources
-
-**Main heading (H1):**  
-Cold Email Tools I Use and Recommend
-
-**Introduction:**  
-Choosing a cold email platform should depend on your workflow—not the popularity of the tool. These are platforms I have used for email infrastructure, campaign management, deliverability, lead generation, and reply handling.
-
-I have included what I use each platform for and the type of business it may suit. If you need help choosing or implementing your outreach stack, you can contact me for a personalized recommendation.
-
-## Quick Comparison
-
-| Platform | Best suited for | What I use it for |
-| --- | --- | --- |
-| Zapmail | Email infrastructure | Creating and managing outreach mailboxes |
-| ReachInbox | All-in-one workflows | Campaigns, warm-up, leads, analytics, and replies |
-| Instantly | Scalable campaign management | Multi-account sending, sequences, analytics, and reply handling |
-
-## Resources Page CTA
-
-**Heading:**  
-Need More Than the Software?
-
-**Description:**  
-Tools are only one part of a successful outreach system. I can help with infrastructure, deliverability, lead sourcing, campaign strategy, email copy, launch, and ongoing management.
-
-**Primary button:**  
-Work With Me
-
-**Secondary button:**  
-Contact Me
-
-## Link Requirements
-
-Use the affiliate URLs exactly as provided.
-
-All affiliate links must:
-
-- Open in a new tab.
-- Include `rel="sponsored nofollow noopener noreferrer"`.
-- Be clearly covered by the affiliate disclosure.
-- Use descriptive button labels rather than “Buy Now.”
-- Never be presented as guaranteed to produce results.
-- Never be included in cold outreach emails.
-- Never be used without disclosure.
-
-Recommended CTA labels:
-
-- Explore Zapmail
-- Explore ReachInbox
-- Explore Instantly
-- See How It Works
-- Visit Platform
-
-Track clicks with an analytics event such as `affiliate_tool_click`, including the tool name as an event property.
-
-
-# 6. Testimonial Area
-
-**Section label:**
-Client Feedback
-
-**Heading:**
-What Clients Say About Working With Me
-
-**Introduction:**
-My work has included both short-term projects and long-term client relationships across development, lead generation, and outreach.
-
-Do not create fake testimonials. Select three strong, relevant reviews from Upwork and use this format:
-
-### Testimonial One
+If genuine, verifiable development testimonials become available later, re-add a Testimonials section using this format:
 
 > “[Paste an exact client review about your development work here.]”
 
 **Client information:**
-Verified Upwork Client
-Full-Stack Web Development
+Verified Upwork Client (or Fiverr)
+[Specific development context, e.g. "Full-Stack Web Development"]
 
-### Testimonial Two
+Do not create fake testimonials, and do not repurpose an outreach-work quote by rewriting it to sound like development work.
 
-> “[Paste an exact review mentioning communication, reliability, or quality here.]”
+# Recommended Outreach Tools — removed
 
-**Client information:**
-Verified Upwork Client
-Long-Term Collaboration
+The affiliate "My Outreach Stack" homepage section and the `/resources` page (Zapmail, ReachInbox, Instantly recommendations, comparison table, and affiliate disclosure) were removed entirely as part of the full-stack-only repositioning. Affiliate tooling for cold-email workflows has no place in a development-only portfolio.
 
-### Testimonial Three
-
-> “[Paste an exact review about lead generation or outreach here.]”
-
-**Client information:**
-Verified Upwork Client
-B2B Lead Generation
-
-**Button below testimonials:**
-View My Upwork Profile
+If an affiliate/resources section is ever reintroduced, it must be for genuinely developer-relevant tools (not outreach tooling), must never appear in the hero/About/Services/primary positioning, must carry its disclosure directly beneath the tool cards (not only in the footer), and every affiliate link must use `rel="sponsored nofollow noopener noreferrer"` and open in a new tab.
 
 # 7. Pricing Table
 
-Keep the public pricing focused on development. Cold outreach pricing depends heavily on mailbox volume, data requirements, and campaign scope.
+Keep the public pricing focused on development only. Do not add a separate outreach-pricing block — that offering no longer exists on this site.
 
 ## Basic
 
@@ -703,12 +445,6 @@ Discuss Your Application
 **Pricing note:**
 Every project has different requirements. Final pricing and delivery time are confirmed after reviewing the complete scope.
 
-**Outreach pricing block:**
-Need cold email outreach, lead generation, or LinkedIn prospecting? These services are quoted separately based on your target market, lead volume, infrastructure, and level of campaign management.
-
-**Button:**
-Request an Outreach Quote
-
 # 8. CTA Section — removed
 
 The standalone CTA band sat directly above the contact form and read as the same
@@ -726,7 +462,7 @@ Contact
 Tell Me About Your Project
 
 **Description:**
-Need a full-stack developer, a cold email specialist, or help building a targeted prospecting system? Send me a few details about your project and I’ll respond directly.
+Need a full-stack developer for a new application, or help improving an existing one? Send me a few details about your project and I’ll respond directly.
 
 ### Contact form
 
@@ -741,14 +477,12 @@ Placeholder: Company name (optional)
 
 **Service needed**
 
-* Full-Stack Web Development
-* Next.js or React Development
-* MERN Stack Development
-* SaaS or MVP Development
-* Cold Email Outreach
-* Lead Generation
-* LinkedIn Outreach
-* Other
+* Full-Stack Web Application
+* Frontend Development
+* Backend/API Development
+* Dashboard or Admin Panel
+* Existing Application Improvement
+* Other Development Project
 
 **Estimated budget**
 
@@ -774,14 +508,14 @@ Prefer email? Contact me directly at `masum@masumdev.com`.
 MasumDev
 
 **Positioning statement:**
-Full-Stack Developer and B2B Outreach Specialist building useful digital products and practical growth systems for businesses worldwide.
+Full-Stack Web Developer building fast, secure, scalable web applications for businesses worldwide.
 
 **Quick links:**
 
 * About
 * Services
 * Projects
-* Testimonials
+* Blog
 * Pricing
 * Contact
 * Résumé
@@ -798,21 +532,20 @@ Do not display an Instagram link until a verified profile URL is provided.
 **Copyright:**
 © 2026 MasumDev. All rights reserved.
 
-**Affiliate disclosure:**
-Some links on this website may be affiliate links. If you purchase through one of these links, I may receive a commission at no additional cost to you. I only recommend tools I use or genuinely trust.
+No affiliate disclosure is needed in the footer — the affiliate/outreach-tools content it used to cover was removed entirely.
 
 # SEO Metadata
 
 ### Homepage title
 
 ```text
-Full-Stack Developer & B2B Outreach | MasumDev
+Full-Stack Web Developer | MasumDev
 ```
 
 ### Meta description
 
 ```text
-Full-stack developer building fast Next.js and MERN web apps. I also help B2B teams with cold email outreach, lead generation, and LinkedIn prospecting.
+Full-stack web developer building fast, scalable web applications with Next.js, React, Node.js, and MongoDB.
 ```
 
 ### Canonical URL
@@ -824,9 +557,9 @@ https://masumdev.com/
 ### Open Graph content
 
 ```text
-OG Title: Full-Stack Developer & B2B Outreach | MasumDev
+OG Title: Full-Stack Web Developer | MasumDev
 
-OG Description: Explore full-stack web applications, SaaS products, and B2B outreach services from Abdullah Al Masum.
+OG Description: Explore full-stack web applications and SaaS products built by Abdullah Al Masum with Next.js, React, Node.js, and MongoDB.
 
 OG URL: https://masumdev.com/
 
@@ -834,7 +567,7 @@ OG Type: website
 
 OG Image: Generate it with Next.js using `app/opengraph-image.tsx` or add a real file at `app/opengraph-image.jpg`.
 
-OG Image Alt: Abdullah Al Masum — Full-Stack Developer and B2B Outreach Specialist
+OG Image Alt: Abdullah Al Masum — Full-Stack Web Developer
 ```
 
 ### Search phrases to target naturally
@@ -853,19 +586,6 @@ OG Image Alt: Abdullah Al Masum — Full-Stack Developer and B2B Outreach Specia
 * SaaS application developer
 * Full-stack web development services
 
-**Outreach service page:**
-
-* Cold email outreach specialist
-* Email deliverability consultant
-* Cold email campaign manager
-
-**Lead generation page:**
-
-* B2B lead generation specialist
-* Apollo lead generation
-* LinkedIn Sales Navigator specialist
-* Prospect list building service
-
 Do not force every phrase into the homepage. Google recommends concise, descriptive titles and specifically warns against keyword stuffing. Each important page should have its own title and purpose. [Google Search Central](https://developers.google.com/search/docs/appearance/title-link)
 
 # Recommended SEO Page Structure
@@ -873,16 +593,15 @@ Do not force every phrase into the homepage. Google recommends concise, descript
 For stronger search visibility, create separate pages:
 
 | URL                                | Primary topic                                   |
-| ---------------------------------- | ----------------------------------------------- |
+| ----------------------------------- | ------------------------------------------------ |
 | `/`                                | Personal portfolio and overall positioning      |
 | `/services/full-stack-development` | Full-stack, Next.js, React and MERN development |
-| `/services/cold-email-outreach`    | Cold email setup, deliverability and management |
-| `/services/lead-generation`        | B2B prospect research and list building         |
 | `/projects/dentflow`               | DentFlow case study                             |
 | `/projects/skillpath-ai`           | SkillPath AI case study                         |
 | `/projects/taskforge`              | TaskForge case study                            |
-| `/resources`                       | Affiliate tools and recommendations             |
 | `/contact`                         | Project inquiry page                            |
+
+`/services/cold-email-outreach`, `/services/lead-generation`, and `/resources` (affiliate tools) are intentionally absent — those offerings and the affiliate content behind them were removed from the site.
 
 Give every page a unique description. Google explains that page-specific descriptions are more useful than repeating the same description throughout a website. [Google Search Central](https://developers.google.com/search/docs/appearance/snippet)
 
@@ -901,12 +620,8 @@ Use the verified social profiles below. Do not add an `image` property until a r
     "name": "Abdullah Al Masum",
     "alternateName": "MasumDev",
     "url": "https://masumdev.com/",
-    "jobTitle": [
-      "Full-Stack Web Developer",
-      "Cold Email Outreach Specialist",
-      "B2B Lead Generation Specialist"
-    ],
-    "description": "Full-stack web developer and B2B outreach specialist building scalable web applications and client acquisition systems.",
+    "jobTitle": ["Full-Stack Web Developer"],
+    "description": "Full-stack web developer building scalable web applications with Next.js, React, Node.js, and MongoDB.",
     "nationality": {
       "@type": "Country",
       "name": "Bangladesh"
@@ -920,10 +635,8 @@ Use the verified social profiles below. Do not add an `image` property until a r
       "Express.js",
       "MongoDB",
       "MERN Stack",
-      "Cold Email Outreach",
-      "Email Deliverability",
-      "B2B Lead Generation",
-      "LinkedIn Outreach"
+      "REST APIs",
+      "Tailwind CSS"
     ],
     "sameAs": [
       "https://www.linkedin.com/in/almasumbd",

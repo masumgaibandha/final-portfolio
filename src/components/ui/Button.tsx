@@ -40,11 +40,25 @@ const sizeClasses = {
  * - a visible terracotta focus ring on every interactive element
  * - a 1px lift on press so the control feels physical
  * - both suppressed under prefers-reduced-motion
+ *
+ * `focus-visible:outline-solid` is required, not redundant with the width/
+ * color/offset utilities below: HeroUI's own `.button` base class (from
+ * `@heroui/styles`, applied via `buttonVariants()`) sets `outline-none`
+ * unconditionally — it expects its own `<Button>` runtime (react-aria's
+ * `data-focus-visible` attribute) to drive a `box-shadow`-based ring instead.
+ * `ButtonLink` renders a plain `next/link` styled with these classes, not
+ * HeroUI's actual `<Button>`, so that mechanism never activates — without an
+ * explicit `outline-style` override here, `outline-2`/`outline-action`/
+ * `outline-offset-2` only ever set width/color/offset on an outline whose
+ * style stays permanently `none`, silently invisible. Confirmed empirically:
+ * removing this class visually and via `getComputedStyle` on every button-
+ * styled control (nav CTA, hero CTAs, all service/pricing CTAs, submit
+ * button) reproduces the invisible-focus-ring bug; adding it back fixes it.
  */
 const interactionClasses = cn(
   "rounded-full font-medium",
   "transition-[background-color,border-color,color,box-shadow,transform] duration-200 ease-out",
-  "focus-visible:outline-action focus-visible:outline-2 focus-visible:outline-offset-2",
+  "focus-visible:outline-action focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid",
   "active:translate-y-px",
   "motion-reduce:transition-none motion-reduce:active:translate-y-0",
 );

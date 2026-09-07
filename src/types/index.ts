@@ -78,14 +78,6 @@ export interface Project {
   image?: ProjectImage;
 }
 
-export interface Testimonial {
-  id: string;
-  quote: string;
-  attribution: string;
-  context: string;
-  source: "Upwork" | "Fiverr";
-}
-
 export interface PricingTier {
   id: string;
   name: string;
@@ -101,21 +93,6 @@ export interface PricingTier {
 export interface SelectOption {
   value: string;
   label: string;
-}
-
-export interface AffiliateTool {
-  id: string;
-  name: string;
-  category: string;
-  heading: string;
-  description: string;
-  usedFor: readonly string[];
-  ctaLabel: string;
-  /** Affiliate URL, copied exactly from portfolio-content.md. */
-  href: string;
-  /** Row in the /resources comparison table. */
-  bestFor: string;
-  useCase: string;
 }
 
 export interface SocialLink {
